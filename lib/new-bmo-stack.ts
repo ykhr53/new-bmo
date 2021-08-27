@@ -1,9 +1,9 @@
 import * as cdk from '@aws-cdk/core';
 
 export class NewBmoStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
-    super(scope, id, props);
+    constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+        super(scope, id, props);
 
-    // The code that defines your stack goes here
-  }
+        // The code that defines your stack goes here
+    }
 }
