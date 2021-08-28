@@ -12,9 +12,12 @@
     },
     "devDependencies": {
         "@aws-cdk/assert": "1.120.0",
+        "@aws-cdk/aws-lambda": "^1.120.0",
+        "@aws-cdk/aws-lambda-nodejs": "^1.120.0",
         "@types/jest": "^26.0.10",
         "@types/node": "10.17.27",
         "aws-cdk": "1.120.0",
+        "esbuild": "0",
         "eslint": "^7.32.0",
         "eslint-config-prettier": "^8.3.0",
         "jest": "^26.4.2",
