@@ -4,5 +4,8 @@ export interface LambdaResponse {
     headers?: {
         [key: string]: string;
     };
+    multiValueHeaders?: {
+        [key: string]: string[];
+    };
     body?: string;
 }
