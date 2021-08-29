@@ -1,4 +1,9 @@
-exports.handler = async function (event: any, context: any) {
+import { LambdaResponse } from '../types';
+
+exports.handler = async function (
+    event: any,
+    context: any
+): Promise<LambdaResponse> {
     console.log('EVENT: \n' + JSON.stringify(event, null, 2));
     let lambdaEvent;
     if (event.body) {
@@ -7,7 +12,7 @@ exports.handler = async function (event: any, context: any) {
         } catch (err) {
             // Request body is not JSON syntax
             console.error(err);
-            const response = {
+            const response: LambdaResponse = {
                 statusCode: 400,
                 body: 'Bad Request',
             };
@@ -21,14 +26,14 @@ exports.handler = async function (event: any, context: any) {
         const body = {
             challenge: challenge,
         };
-        const response = {
+        const response: LambdaResponse = {
             statusCode: 200,
             body: JSON.stringify(body),
         };
         return response;
     }
 
-    const response = {
+    const response: LambdaResponse = {
         statusCode: 200,
         headers: {},
         body: JSON.stringify({ message: 'Hello World!' }),
