@@ -2,7 +2,17 @@ exports.handler = async function (event: any, context: any) {
     console.log('EVENT: \n' + JSON.stringify(event, null, 2));
     let lambdaEvent;
     if (event.body) {
-        lambdaEvent = JSON.parse(event.body);
+        try {
+            lambdaEvent = JSON.parse(event.body);
+        } catch (err) {
+            // Request body is not JSON syntax
+            console.error(err);
+            const response = {
+                statusCode: 400,
+                body: 'Bad Request',
+            };
+            return response;
+        }
     }
 
     // Handle challenge request
