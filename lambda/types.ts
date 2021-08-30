@@ -16,6 +16,7 @@ export interface LambdaRequest {
     } | null;
     body: string | null;
     isBase64Encoded: boolean;
+    [key: string]: any;
 }
 
 export interface LambdaResponse {
