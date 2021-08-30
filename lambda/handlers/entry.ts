@@ -1,7 +1,7 @@
-import { LambdaResponse } from '../types';
+import { LambdaRequest, LambdaResponse } from '../types';
 
 exports.handler = async function (
-    event: any,
+    event: LambdaRequest,
     context: any
 ): Promise<LambdaResponse> {
     console.log('EVENT: \n' + JSON.stringify(event, null, 2));
