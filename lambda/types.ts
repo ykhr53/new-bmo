@@ -30,3 +30,9 @@ export interface LambdaResponse {
     };
     body?: string;
 }
+
+export interface SlackMessage {
+    text: string;
+    channel: string;
+    user: string;
+}

@@ -1,4 +1,4 @@
-import { LambdaRequest, LambdaResponse } from '../types';
+import { LambdaRequest, LambdaResponse, SlackMessage } from '../types';
 
 exports.handler = async function (
     event: LambdaRequest,
@@ -40,3 +40,25 @@ exports.handler = async function (
     };
     return response;
 };
+
+// Need to add slack event interface
+function getMessage(lambdaEvent: any): SlackMessage {
+    const slackEvent = lambdaEvent.event;
+    let text,
+        user,
+        channel: string = '';
+
+    if (slackEvent) {
+        if (slackEvent.text) text = slackEvent.text;
+        if (slackEvent.user) user = slackEvent.user;
+        if (slackEvent.channel) channel = slackEvent.channel;
+    }
+
+    const message: SlackMessage = {
+        text: text,
+        user: user,
+        channel: channel,
+    };
+
+    return message;
+}
