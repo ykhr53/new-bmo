@@ -1,3 +1,18 @@
+# Prerequisites
+
+## Environment Variables
+
+Before you build/deploy the CDK package, you need to specity a target accoun id and region.
+
+```
+export CDK_DEPLOY_ACCOUNT=<AWS ACCOUNT ID>
+export CDK_DEPLOY_REGION=<REGOIN>
+```
+
+## Secret Manager
+
+You need to store your App's slack token in a Secrets Manager secret named 'SlackTokenForBMO', secret key named 'SLACK_TOKEN'.
+
 # Welcome to your CDK TypeScript project!
 
 This is a blank project for TypeScript development with CDK.
