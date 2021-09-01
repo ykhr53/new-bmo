@@ -28,6 +28,7 @@
         "typescript": "~3.9.7"
     },
     "dependencies": {
+        "@aws-cdk/aws-dynamodb": "^1.120.0",
         "@aws-cdk/aws-secretsmanager": "^1.120.0",
         "@aws-cdk/core": "1.120.0",
         "@slack/web-api": "^6.4.0",

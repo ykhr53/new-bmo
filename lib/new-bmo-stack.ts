@@ -3,6 +3,7 @@ import * as nodejs from '@aws-cdk/aws-lambda-nodejs';
 import * as lambda from '@aws-cdk/aws-lambda';
 import * as apigateway from '@aws-cdk/aws-apigateway';
 import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
+import * as ddb from '@aws-cdk/aws-dynamodb';
 
 export class NewBmoStack extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -40,5 +41,20 @@ export class NewBmoStack extends cdk.Stack {
             'POST',
             new apigateway.LambdaIntegration(entryLambdaFunction)
         );
+
+        const voteTable = new ddb.Table(this, 'voteTable', {
+            partitionKey: {
+                name: 'name',
+                type: ddb.AttributeType.STRING,
+            },
+            tableName: 'bmo-vote',
+        });
+        const wordTable = new ddb.Table(this, 'wordTable', {
+            partitionKey: {
+                name: 'name',
+                type: ddb.AttributeType.STRING,
+            },
+            tableName: 'bmo-word',
+        });
     }
 }
