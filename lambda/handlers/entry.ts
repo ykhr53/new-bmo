@@ -1,4 +1,5 @@
 import { LambdaRequest, LambdaResponse, SlackMessage } from '../types';
+import { HTTP_200, HTTP_400 } from '../response_templates';
 import { WebClient } from '@slack/web-api';
 
 exports.handler = async function (
@@ -9,11 +10,7 @@ exports.handler = async function (
 
     // return error response if request body is empty
     if (event.body === null) {
-        const response: LambdaResponse = {
-            statusCode: 400,
-            body: 'Bad Request',
-        };
-        return response;
+        return HTTP_400;
     }
 
     let lambdaEvent;
@@ -22,11 +19,7 @@ exports.handler = async function (
     } catch (err) {
         // Request body is not JSON syntax
         console.error(err);
-        const response: LambdaResponse = {
-            statusCode: 400,
-            body: 'Bad Request',
-        };
-        return response;
+        return HTTP_400;
     }
 
     // Handle challenge request
@@ -57,14 +50,12 @@ exports.handler = async function (
                 console.log(err);
             }
         }
+    } else {
+        // Return immediately if the message is posted by BMO
+        return HTTP_200;
     }
 
-    const response: LambdaResponse = {
-        statusCode: 200,
-        headers: {},
-        body: JSON.stringify({ message: 'Hello World!' }),
-    };
-    return response;
+    return HTTP_200;
 };
 
 // Need to add slack event interface
