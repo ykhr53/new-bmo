@@ -87,26 +87,23 @@ exports.handler = async function (
     return HTTP_200;
 };
 
-// Need to add slack event interface
-function getMessage(lambdaEvent: any): SlackMessage {
-    const slackEvent = lambdaEvent.event;
-    let text: string = '',
-        user: string = '',
-        channel: string = '';
-
-    if (slackEvent) {
-        if (slackEvent.text) text = slackEvent.text;
-        if (slackEvent.user) user = slackEvent.user;
-        if (slackEvent.channel) channel = slackEvent.channel;
-    }
-
-    const message: SlackMessage = {
-        text: text,
-        user: user,
-        channel: channel,
+function getMessage(lambdaEvent: { [key: string]: any }): SlackMessage {
+    const defaultMessage: SlackMessage = {
+        text: '',
+        user: '',
+        channel: '',
     };
 
-    return message;
+    if (!lambdaEvent.event) {
+        return defaultMessage;
+    }
+
+    const slackEvent = lambdaEvent.event;
+    return {
+        text: slackEvent.text || defaultMessage.text,
+        user: slackEvent.user || defaultMessage.user,
+        channel: slackEvent.channel || defaultMessage.channel,
+    };
 }
 
 function isBMO(message: SlackMessage): boolean {
