@@ -5,19 +5,27 @@ exports.handler = async function (
     context: any
 ): Promise<LambdaResponse> {
     console.log('EVENT: \n' + JSON.stringify(event, null, 2));
+
+    // return error response if request body is empty
+    if (event.body === null) {
+        const response: LambdaResponse = {
+            statusCode: 400,
+            body: 'Bad Request',
+        };
+        return response;
+    }
+
     let lambdaEvent;
-    if (event.body) {
-        try {
-            lambdaEvent = JSON.parse(event.body);
-        } catch (err) {
-            // Request body is not JSON syntax
-            console.error(err);
-            const response: LambdaResponse = {
-                statusCode: 400,
-                body: 'Bad Request',
-            };
-            return response;
-        }
+    try {
+        lambdaEvent = JSON.parse(event.body);
+    } catch (err) {
+        // Request body is not JSON syntax
+        console.error(err);
+        const response: LambdaResponse = {
+            statusCode: 400,
+            body: 'Bad Request',
+        };
+        return response;
     }
 
     // Handle challenge request
