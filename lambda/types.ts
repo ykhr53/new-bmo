@@ -36,3 +36,7 @@ export interface SlackMessage {
     channel: string;
     user: string;
 }
+
+export interface RegexTable {
+    [key: string]: RegExp;
+}

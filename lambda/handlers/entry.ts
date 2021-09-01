@@ -1,6 +1,19 @@
-import { LambdaRequest, LambdaResponse, SlackMessage } from '../types';
+import {
+    LambdaRequest,
+    LambdaResponse,
+    SlackMessage,
+    RegexTable,
+} from '../types';
 import { HTTP_200, HTTP_400 } from '../response_templates';
 import { WebClient } from '@slack/web-api';
+import { MockIntegration } from '@aws-cdk/aws-apigateway';
+
+const BMO_REGEX: RegexTable = {
+    vote: /^\S+(\+\+|--)\s/,
+    word: /\!word\s\S+/,
+    words: /^\!words$/,
+    add: /^\!add\s\S+/,
+};
 
 exports.handler = async function (
     event: LambdaRequest,
@@ -39,20 +52,37 @@ exports.handler = async function (
     const web = new WebClient(process.env.SLACK_TOKEN);
     const message: SlackMessage = getMessage(lambdaEvent);
 
-    if (!isBMO(message)) {
-        if (containsBMO(message)) {
-            try {
-                await web.chat.postMessage({
-                    channel: message.channel,
-                    text: 'よんだ？',
-                });
-            } catch (err) {
-                console.log(err);
-            }
-        }
-    } else {
+    if (isBMO(message)) {
         // Return immediately if the message is posted by BMO
         return HTTP_200;
+    } else {
+        const commentType = searchRegex(message);
+        let reply = '';
+        switch (commentType) {
+            case 'vote':
+                reply = '++/-- はまだ未実装だよ。ごめんね。';
+                break;
+            case 'word':
+                reply = 'word 参照はまだ未実装だよ。ごめんね。';
+                break;
+            case 'words':
+                reply = 'word 一覧はまだ未実装だよ。ごめんね。';
+                break;
+            case 'add':
+                reply = 'word 登録はまだ未実装だよ。ごめんね。';
+                break;
+            default:
+                console.log('default');
+                break;
+        }
+        try {
+            await web.chat.postMessage({
+                channel: message.channel,
+                text: reply,
+            });
+        } catch (err) {
+            console.log(err);
+        }
     }
 
     return HTTP_200;
@@ -84,7 +114,12 @@ function isBMO(message: SlackMessage): boolean {
     return message.user == process.env.APP_UNAME;
 }
 
-function containsBMO(message: SlackMessage): boolean {
+function searchRegex(message: SlackMessage): string {
     const text = message.text;
-    return text.includes('BMO');
+    for (let key in BMO_REGEX) {
+        if (text.match(BMO_REGEX[key]) != null) {
+            return key;
+        }
+    }
+    return '';
 }
