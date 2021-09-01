@@ -1,4 +1,5 @@
 import { LambdaRequest, LambdaResponse, SlackMessage } from '../types';
+import { WebClient } from '@slack/web-api';
 
 exports.handler = async function (
     event: LambdaRequest,
@@ -41,6 +42,19 @@ exports.handler = async function (
         return response;
     }
 
+    const web = new WebClient(process.env.SLACK_TOKEN);
+    const message: SlackMessage = getMessage(lambdaEvent);
+    if (containsBMO(message)) {
+        try {
+            await web.chat.postMessage({
+                channel: message.channel,
+                text: 'よんだ？',
+            });
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     const response: LambdaResponse = {
         statusCode: 200,
         headers: {},
@@ -52,8 +66,8 @@ exports.handler = async function (
 // Need to add slack event interface
 function getMessage(lambdaEvent: any): SlackMessage {
     const slackEvent = lambdaEvent.event;
-    let text,
-        user,
+    let text: string = '',
+        user: string = '',
         channel: string = '';
 
     if (slackEvent) {
@@ -69,4 +83,9 @@ function getMessage(lambdaEvent: any): SlackMessage {
     };
 
     return message;
+}
+
+function containsBMO(message: SlackMessage): boolean {
+    const text = message.text;
+    return text.includes('BMO');
 }
