@@ -7,7 +7,7 @@ exports.handler = async function (
     console.log('EVENT: \n' + JSON.stringify(event, null, 2));
 
     // return error response if request body is empty
-    if (event.body == null) {
+    if (event.body === null) {
         const response: LambdaResponse = {
             statusCode: 400,
             body: 'Bad Request',
