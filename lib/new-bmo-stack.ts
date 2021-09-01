@@ -15,6 +15,7 @@ export class NewBmoStack extends cdk.Stack {
         );
         // Probably we should consider to pass Secret ARN instead of token itself
         const token = secret.secretValueFromJson('SLACK_TOKEN').toString();
+        const uname = secret.secretValueFromJson('APP_UNAME').toString();
 
         const entryLambdaFunction = new nodejs.NodejsFunction(
             this,
@@ -27,6 +28,7 @@ export class NewBmoStack extends cdk.Stack {
                 runtime: lambda.Runtime.NODEJS_14_X,
                 environment: {
                     SLACK_TOKEN: token,
+                    APP_UNAME: uname,
                 },
             }
         );

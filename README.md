@@ -11,7 +11,12 @@ export CDK_DEPLOY_REGION=<REGOIN>
 
 ## Secret Manager
 
-You need to store your App's slack token in a Secrets Manager secret named 'SlackTokenForBMO', secret key named 'SLACK_TOKEN'.
+You need to store your App's slack token and user name in a Secrets Manager secret named 'SlackTokenForBMO'.secret key named 'SLACK_TOKEN'.
+
+```
+SLACK_TOKEN: <App's slack token> (something begins with xoxb- or xoxp-)
+APP_UNAME: <App's user name> (something like U01234ABCDE)
+```
 
 # Welcome to your CDK TypeScript project!
 

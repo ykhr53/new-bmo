@@ -42,16 +42,20 @@ exports.handler = async function (
         return response;
     }
 
+    // Handle message
     const web = new WebClient(process.env.SLACK_TOKEN);
     const message: SlackMessage = getMessage(lambdaEvent);
-    if (containsBMO(message)) {
-        try {
-            await web.chat.postMessage({
-                channel: message.channel,
-                text: 'よんだ？',
-            });
-        } catch (err) {
-            console.log(err);
+
+    if (!isBMO(message)) {
+        if (containsBMO(message)) {
+            try {
+                await web.chat.postMessage({
+                    channel: message.channel,
+                    text: 'よんだ？',
+                });
+            } catch (err) {
+                console.log(err);
+            }
         }
     }
 
@@ -83,6 +87,10 @@ function getMessage(lambdaEvent: any): SlackMessage {
     };
 
     return message;
+}
+
+function isBMO(message: SlackMessage): boolean {
+    return message.user == process.env.APP_UNAME;
 }
 
 function containsBMO(message: SlackMessage): boolean {
