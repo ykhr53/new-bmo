@@ -72,8 +72,7 @@ exports.handler = async function (
                 reply = 'word 登録はまだ未実装だよ。ごめんね。';
                 break;
             default:
-                console.log('default');
-                break;
+                return HTTP_400;
         }
         try {
             await web.chat.postMessage({
