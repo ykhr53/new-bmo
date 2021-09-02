@@ -2,7 +2,7 @@
 
 ## Environment Variables
 
-Before you build/deploy the CDK package, you need to specity a target accoun id and region.
+Before you build/deploy the CDK package, you need to specify a target accoun id and region.
 
 ```
 export CDK_DEPLOY_ACCOUNT=<AWS ACCOUNT ID>
