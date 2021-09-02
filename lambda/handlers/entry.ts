@@ -6,7 +6,6 @@ import {
 } from '../types';
 import { HTTP_200, HTTP_400 } from '../response_templates';
 import { WebClient } from '@slack/web-api';
-import { MockIntegration } from '@aws-cdk/aws-apigateway';
 
 const BMO_REGEX: RegexTable = {
     vote: /^\S+(\+\+|--)\s/,

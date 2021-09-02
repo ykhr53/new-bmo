@@ -2,7 +2,7 @@
 
 ## Environment Variables
 
-Before you build/deploy the CDK package, you need to specify a target accoun id and region.
+Before you build/deploy the CDK package, you need to specify a target account id and a region.
 
 ```
 export CDK_DEPLOY_ACCOUNT=<AWS ACCOUNT ID>
@@ -11,7 +11,7 @@ export CDK_DEPLOY_REGION=<REGOIN>
 
 ## Secret Manager
 
-You need to store your App's slack token and user name in a Secrets Manager secret named 'SlackTokenForBMO'.secret key named 'SLACK_TOKEN'.
+You need to store your App's slack token and user name in a Secrets Manager secret named 'SlackTokenForBMO'.
 
 ```
 SLACK_TOKEN: <App's slack token> (something begins with xoxb- or xoxp-)
