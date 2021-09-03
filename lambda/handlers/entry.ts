@@ -7,7 +7,7 @@ import {
 } from '../types';
 import { HTTP_200, HTTP_400 } from '../response_templates';
 import { WebClient } from '@slack/web-api';
-import { getWord, addWord } from '../ddb_helper';
+import * as ddb from '../ddb_helper';
 
 const BMO_REGEX: RegexTable = {
     vote: /^\S+(\+\+|--)\s/,
@@ -64,11 +64,12 @@ exports.handler = async function (
         let reply = '';
         switch (commentType) {
             case 'vote':
-                reply = '++/-- はまだ未実装だよ。ごめんね。';
+                const vd = parseVote(message.text);
+                reply = await ddb.vote(vd, voteTable);
                 break;
             case 'word':
                 const wq = parseWord(message.text);
-                const wa = await getWord(wq, 'word', wordTable);
+                const wa = await ddb.getWord(wq, wordTable);
                 reply = `${wq}: ${wa}`;
                 break;
             case 'words':
@@ -79,7 +80,7 @@ exports.handler = async function (
                 if (aq.length < 2) {
                     reply = 'コマンドがおかしいみたい';
                 } else {
-                    reply = await addWord(aq[0], aq[1], wordTable);
+                    reply = await ddb.addWord(aq[0], aq[1], wordTable);
                 }
                 break;
             default:
@@ -165,7 +166,6 @@ function parseVote(text: string): VoteDict {
         for (let v of names.values()) {
             let isPositive = v.endsWith('+ ');
             let name = v.replace(/(\+\+|--)\s$/, '');
-            console.log(name);
             if (votes[name]) {
                 votes[name] = isPositive ? votes[name] + 1 : votes[name] - 1;
             } else {
