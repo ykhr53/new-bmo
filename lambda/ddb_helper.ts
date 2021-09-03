@@ -1,22 +1,37 @@
 import * as AWS from 'aws-sdk';
 
-export function getItem() {
+export async function getWord(key: string, attr: string, table: string) {
     const documentClient = new AWS.DynamoDB.DocumentClient();
     const params = {
-        TableName: 'Table',
+        TableName: table,
         Key: {
-            HashKey: 'hashkey',
+            name: key,
         },
+        AttributesToGet: [attr],
     };
-    documentClient.get(params, function (err, data) {
-        if (err) console.log(err);
-        else console.log(data);
-    });
+    try {
+        const data = await documentClient.get(params).promise();
+        if (data.Item) return data.Item['word'];
+    } catch (err) {
+        console.log(err);
+        return 'エラーだよ';
+    }
 }
 
-export function putItem() {
+export async function addWord(key: string, comment: string, table: string) {
     const documentClient = new AWS.DynamoDB.DocumentClient();
-}
-export function scan() {
-    const documentClient = new AWS.DynamoDB.DocumentClient();
+    const params = {
+        TableName: table,
+        Item: {
+            name: key,
+            word: comment,
+        },
+    };
+    try {
+        await documentClient.put(params).promise();
+        return '登録しました！';
+    } catch (err) {
+        console.log(err);
+        return '登録に失敗しました';
+    }
 }

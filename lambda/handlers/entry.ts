@@ -6,6 +6,7 @@ import {
 } from '../types';
 import { HTTP_200, HTTP_400 } from '../response_templates';
 import { WebClient } from '@slack/web-api';
+import { getWord, addWord } from '../ddb_helper';
 
 const BMO_REGEX: RegexTable = {
     vote: /^\S+(\+\+|--)\s/,
@@ -18,7 +19,7 @@ exports.handler = async function (
     event: LambdaRequest,
     context: any
 ): Promise<LambdaResponse> {
-    console.log('EVENT: \n' + JSON.stringify(event, null, 2));
+    //console.log('EVENT: \n' + JSON.stringify(event, null, 2));
 
     // return error response if request body is empty
     if (event.body === null) {
@@ -48,6 +49,8 @@ exports.handler = async function (
     }
 
     // Handle message
+    const wordTable = process.env.WORD_TABLE || '';
+    const voteTable = process.env.VOTE_TABLE || '';
     const web = new WebClient(process.env.SLACK_TOKEN);
     const message: SlackMessage = getMessage(lambdaEvent);
 
@@ -55,6 +58,7 @@ exports.handler = async function (
         // Return immediately if the message is posted by BMO
         return HTTP_200;
     } else {
+        console.log(message.text);
         const commentType = searchRegex(message);
         let reply = '';
         switch (commentType) {
@@ -62,13 +66,20 @@ exports.handler = async function (
                 reply = '++/-- はまだ未実装だよ。ごめんね。';
                 break;
             case 'word':
-                reply = 'word 参照はまだ未実装だよ。ごめんね。';
+                const wq = parseWord(message.text);
+                const wa = await getWord(wq, 'word', wordTable);
+                reply = `${wq}: ${wa}`;
                 break;
             case 'words':
                 reply = 'word 一覧はまだ未実装だよ。ごめんね。';
                 break;
             case 'add':
-                reply = 'word 登録はまだ未実装だよ。ごめんね。';
+                const aq = parseAdd(message.text);
+                if (aq.length < 2) {
+                    reply = 'コマンドがおかしいみたい';
+                } else {
+                    reply = await addWord(aq[0], aq[1], wordTable);
+                }
                 break;
             default:
                 return HTTP_200;
@@ -117,4 +128,30 @@ function searchRegex(message: SlackMessage): string {
         }
     }
     return '';
+}
+
+function parseWord(text: string): string {
+    const words = text.split(' ');
+    if (words.length > 1) {
+        return words[1];
+    }
+    return '';
+}
+
+function parseAdd(text: string): string[] {
+    /**
+     *  Return structure will be...
+     *  1. If an input has '!add', 'key', and 'comment'
+     *     -> ['key', 'comment']
+     *  2. If an input is incorrect format
+     *     -> []
+     */
+    const words = text.split(' ');
+    const ret: string[] = [];
+
+    if (words.length < 3) return ret;
+
+    ret[0] = words[1];
+    ret[1] = words.slice(2).join(' ');
+    return ret;
 }
