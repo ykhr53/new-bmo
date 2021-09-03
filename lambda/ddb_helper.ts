@@ -50,7 +50,6 @@ export async function getVote(vd: VoteDict, table: string) {
         };
         try {
             const data = await documentClient.get(params).promise();
-            console.log('data: ', data);
             if (!data.Item || !data.Item['vote']) {
                 retvd[name] = 0;
             } else {
