@@ -40,3 +40,7 @@ export interface SlackMessage {
 export interface RegexTable {
     [key: string]: RegExp;
 }
+
+export interface VoteDict {
+    [key: string]: number;
+}

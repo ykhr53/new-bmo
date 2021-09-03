@@ -3,6 +3,7 @@ import {
     LambdaResponse,
     SlackMessage,
     RegexTable,
+    VoteDict,
 } from '../types';
 import { HTTP_200, HTTP_400 } from '../response_templates';
 import { WebClient } from '@slack/web-api';
@@ -154,4 +155,23 @@ function parseAdd(text: string): string[] {
     ret[0] = words[1];
     ret[1] = words.slice(2).join(' ');
     return ret;
+}
+
+function parseVote(text: string): VoteDict {
+    let votes: VoteDict = {};
+    const regex = /\S+(\+\+|--)\s/g;
+    const names = text.match(regex);
+    if (names != null) {
+        for (let v of names.values()) {
+            let isPositive = v.endsWith('+ ');
+            let name = v.replace(/(\+\+|--)\s$/, '');
+            console.log(name);
+            if (votes[name]) {
+                votes[name] = isPositive ? votes[name] + 1 : votes[name] - 1;
+            } else {
+                votes[name] = isPositive ? 1 : -1;
+            }
+        }
+    }
+    return votes;
 }
