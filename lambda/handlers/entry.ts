@@ -8,6 +8,7 @@ import {
 import { HTTP_200, HTTP_400 } from '../response_templates';
 import { WebClient } from '@slack/web-api';
 import * as ddb from '../ddb_helper';
+import { getSecrets } from '../secrets_helper';
 
 const BMO_REGEX: RegexTable = {
     vote: /^\S+(\+\+|--)\s/,
@@ -22,7 +23,7 @@ exports.handler = async function (
 ): Promise<LambdaResponse> {
     //console.log('EVENT: \n' + JSON.stringify(event, null, 2));
 
-    // return error response if request body is empty
+    // Return error response if request body is empty
     if (event.body === null) {
         return HTTP_400;
     }
@@ -49,11 +50,17 @@ exports.handler = async function (
         return response;
     }
 
+    // Get secrets
+    const secrets: { [key: string]: string } = await getSecrets();
+    const SLACK_TOKEN = secrets.token;
+    const APP_UNAME = secrets.uname;
+    if (!SLACK_TOKEN || !APP_UNAME) return HTTP_200;
+
     // Handle message
-    const slack = new WebClient(process.env.SLACK_TOKEN);
+    const slack = new WebClient(SLACK_TOKEN);
     const message: SlackMessage = getMessage(lambdaEvent);
 
-    if (isBMO(message)) {
+    if (isBMO(message, APP_UNAME)) {
         // Return immediately if the message is posted by BMO
         return HTTP_200;
     } else {
@@ -105,7 +112,6 @@ exports.handler = async function (
             console.log(err);
         }
     }
-
     return HTTP_200;
 };
 
@@ -128,8 +134,8 @@ function getMessage(lambdaEvent: { [key: string]: any }): SlackMessage {
     };
 }
 
-function isBMO(message: SlackMessage): boolean {
-    return message.user == process.env.APP_UNAME;
+function isBMO(message: SlackMessage, appuname: string): boolean {
+    return message.user == appuname;
 }
 
 function searchRegex(message: SlackMessage): string {

@@ -59,6 +59,7 @@ export class NewBmoStack extends cdk.Stack {
             resources: [bmoMemory.tableArn],
         });
         entryLambdaFunction.addToRolePolicy(ddbPolicy);
+        secret.grantRead(entryLambdaFunction);
 
         // API Gateway
         const entryAPIG = new apigateway.RestApi(this, 'BMO-APIG', {
