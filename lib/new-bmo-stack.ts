@@ -21,19 +21,12 @@ export class NewBmoStack extends cdk.Stack {
         const uname = secret.secretValueFromJson('APP_UNAME').toString();
 
         // DynamoDB
-        const voteTable = new ddb.Table(this, 'voteTable', {
+        const bmoTable = new ddb.Table(this, 'wordTable', {
             partitionKey: {
                 name: 'name',
                 type: ddb.AttributeType.STRING,
             },
-            tableName: 'bmo-vote',
-        });
-        const wordTable = new ddb.Table(this, 'wordTable', {
-            partitionKey: {
-                name: 'name',
-                type: ddb.AttributeType.STRING,
-            },
-            tableName: 'bmo-word',
+            tableName: 'bmo-brain',
         });
 
         // Lambda
@@ -49,8 +42,7 @@ export class NewBmoStack extends cdk.Stack {
                 environment: {
                     SLACK_TOKEN: token,
                     APP_UNAME: uname,
-                    WORD_TABLE: wordTable.tableName,
-                    VOTE_TABLE: voteTable.tableName,
+                    BMO_TABLE: bmoTable.tableName,
                 },
             }
         );
@@ -64,7 +56,7 @@ export class NewBmoStack extends cdk.Stack {
                 'dynamodb:Scan',
                 'dynamodb:Update*',
             ],
-            resources: [voteTable.tableArn, wordTable.tableArn],
+            resources: [bmoTable.tableArn],
         });
         entryLambdaFunction.addToRolePolicy(ddbPolicy);
 

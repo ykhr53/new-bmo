@@ -1,10 +1,12 @@
 import { VoteDict } from './types';
 import * as AWS from 'aws-sdk';
 
-export async function getWord(key: string, table: string) {
+const BMO_TABLE = process.env.BMO_TABLE || '';
+
+export async function getWord(key: string) {
     const documentClient = new AWS.DynamoDB.DocumentClient();
     const params = {
-        TableName: table,
+        TableName: BMO_TABLE,
         Key: {
             name: key,
         },
@@ -19,10 +21,10 @@ export async function getWord(key: string, table: string) {
     }
 }
 
-export async function addWord(key: string, comment: string, table: string) {
+export async function addWord(key: string, comment: string) {
     const documentClient = new AWS.DynamoDB.DocumentClient();
     const params = {
-        TableName: table,
+        TableName: BMO_TABLE,
         Item: {
             name: key,
             word: comment,
@@ -37,12 +39,12 @@ export async function addWord(key: string, comment: string, table: string) {
     }
 }
 
-export async function getVote(vd: VoteDict, table: string) {
+export async function getVote(vd: VoteDict) {
     const documentClient = new AWS.DynamoDB.DocumentClient();
     const retvd: VoteDict = {};
     for (let name in vd) {
         const params = {
-            TableName: table,
+            TableName: BMO_TABLE,
             Key: {
                 name: name,
             },
@@ -62,14 +64,14 @@ export async function getVote(vd: VoteDict, table: string) {
     return retvd;
 }
 
-export async function vote(vd: VoteDict, table: string) {
+export async function vote(vd: VoteDict) {
     const documentClient = new AWS.DynamoDB.DocumentClient();
-    const currentVote: VoteDict = await getVote(vd, table);
+    const currentVote: VoteDict = await getVote(vd);
     let reply: string = '';
     for (let name in vd) {
         const vsum = currentVote[name] + vd[name];
         const params = {
-            TableName: table,
+            TableName: BMO_TABLE,
             Item: {
                 name: name,
                 vote: vsum,
@@ -88,11 +90,11 @@ export async function vote(vd: VoteDict, table: string) {
     return reply;
 }
 
-export async function getAllWords(table: string) {
+export async function getAllWords() {
     const documentClient = new AWS.DynamoDB.DocumentClient();
     let allWords: string = '';
     const params = {
-        TableName: table,
+        TableName: BMO_TABLE,
     };
     try {
         const data = await documentClient.scan(params).promise();

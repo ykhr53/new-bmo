@@ -50,8 +50,6 @@ exports.handler = async function (
     }
 
     // Handle message
-    const wordTable = process.env.WORD_TABLE || '';
-    const voteTable = process.env.VOTE_TABLE || '';
     const slack = new WebClient(process.env.SLACK_TOKEN);
     const message: SlackMessage = getMessage(lambdaEvent);
 
@@ -65,15 +63,15 @@ exports.handler = async function (
         switch (commentType) {
             case 'vote':
                 const vd = parseVote(message.text);
-                reply = await ddb.vote(vd, voteTable);
+                reply = await ddb.vote(vd);
                 break;
             case 'word':
                 const wq = parseWord(message.text);
-                const wa = await ddb.getWord(wq, wordTable);
+                const wa = await ddb.getWord(wq);
                 reply = `${wq}: ${wa}`;
                 break;
             case 'words':
-                const allWords = await ddb.getAllWords(wordTable);
+                const allWords = await ddb.getAllWords();
                 const fp = {
                     title: 'BMO word list',
                     filename: 'words',
@@ -92,7 +90,7 @@ exports.handler = async function (
                 if (aq.length < 2) {
                     reply = 'コマンドがおかしいみたい';
                 } else {
-                    reply = await ddb.addWord(aq[0], aq[1], wordTable);
+                    reply = await ddb.addWord(aq[0], aq[1]);
                 }
                 break;
             default:
