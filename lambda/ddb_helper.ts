@@ -10,11 +10,11 @@ export async function getWord(key: string) {
         Key: {
             name: key,
         },
-        AttributesToGet: ['word'],
+        AttributesToGet: ['description'],
     };
     try {
         const data = await documentClient.get(params).promise();
-        if (data.Item) return data.Item['word'];
+        if (data.Item) return data.Item['description'];
     } catch (err) {
         console.log(err);
         return 'エラーだよ';
@@ -27,7 +27,7 @@ export async function addWord(key: string, comment: string) {
         TableName: BMO_TABLE,
         Item: {
             name: key,
-            word: comment,
+            description: comment,
         },
     };
     try {
@@ -48,14 +48,14 @@ export async function getVote(vd: VoteDict) {
             Key: {
                 name: name,
             },
-            AttributesToGet: ['vote'],
+            AttributesToGet: ['votes'],
         };
         try {
             const data = await documentClient.get(params).promise();
-            if (!data.Item || !data.Item['vote']) {
+            if (!data.Item || !data.Item['votes']) {
                 retvd[name] = 0;
             } else {
-                retvd[name] = data.Item['vote'];
+                retvd[name] = data.Item['votes'];
             }
         } catch (err) {
             console.log(err);
@@ -74,7 +74,7 @@ export async function vote(vd: VoteDict) {
             TableName: BMO_TABLE,
             Item: {
                 name: name,
-                vote: vsum,
+                votes: vsum,
             },
         };
         try {
@@ -101,7 +101,7 @@ export async function getAllWords() {
         console.log(data.Items);
         if (data.Items) {
             for (let item of data.Items) {
-                allWords += `${item['name']}: ${item['word']}\n`;
+                allWords += `${item['name']}: ${item['description']}\n`;
             }
         }
     } catch (err) {
