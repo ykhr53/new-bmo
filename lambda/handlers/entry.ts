@@ -52,7 +52,7 @@ exports.handler = async function (
     // Handle message
     const wordTable = process.env.WORD_TABLE || '';
     const voteTable = process.env.VOTE_TABLE || '';
-    const web = new WebClient(process.env.SLACK_TOKEN);
+    const slack = new WebClient(process.env.SLACK_TOKEN);
     const message: SlackMessage = getMessage(lambdaEvent);
 
     if (isBMO(message)) {
@@ -73,7 +73,19 @@ exports.handler = async function (
                 reply = `${wq}: ${wa}`;
                 break;
             case 'words':
-                reply = 'word 一覧はまだ未実装だよ。ごめんね。';
+                const allWords = await ddb.getAllWords(wordTable);
+                const fp = {
+                    title: 'BMO word list',
+                    filename: 'words',
+                    filetype: 'post',
+                    content: allWords,
+                };
+                const result = await slack.files.upload(fp);
+                if (result.file && result.file.permalink) {
+                    reply = result.file.permalink;
+                } else {
+                    reply = 'エラーだよ';
+                }
                 break;
             case 'add':
                 const aq = parseAdd(message.text);
@@ -87,7 +99,7 @@ exports.handler = async function (
                 return HTTP_200;
         }
         try {
-            await web.chat.postMessage({
+            await slack.chat.postMessage({
                 channel: message.channel,
                 text: reply,
             });

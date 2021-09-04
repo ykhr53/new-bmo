@@ -87,3 +87,23 @@ export async function vote(vd: VoteDict, table: string) {
     }
     return reply;
 }
+
+export async function getAllWords(table: string) {
+    const documentClient = new AWS.DynamoDB.DocumentClient();
+    let allWords: string = '';
+    const params = {
+        TableName: table,
+    };
+    try {
+        const data = await documentClient.scan(params).promise();
+        console.log(data.Items);
+        if (data.Items) {
+            for (let item of data.Items) {
+                allWords += `${item['name']}: ${item['word']}\n`;
+            }
+        }
+    } catch (err) {
+        console.log(err);
+    }
+    return allWords;
+}
