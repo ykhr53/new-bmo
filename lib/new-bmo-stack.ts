@@ -21,7 +21,7 @@ export class NewBmoStack extends cdk.Stack {
         const uname = secret.secretValueFromJson('APP_UNAME').toString();
 
         // DynamoDB
-        const bmoTable = new ddb.Table(this, 'wordTable', {
+        const bmoTable = new ddb.Table(this, 'bmoTable', {
             partitionKey: {
                 name: 'name',
                 type: ddb.AttributeType.STRING,
