@@ -16,9 +16,6 @@ export class NewBmoStack extends cdk.Stack {
             'SlackToken',
             'SlackTokenForBMO'
         );
-        // Probably we should consider to pass Secret ARN instead of token itself
-        const token = secret.secretValueFromJson('SLACK_TOKEN').toString();
-        const uname = secret.secretValueFromJson('APP_UNAME').toString();
 
         // DynamoDB
         const bmoMemory = new ddb.Table(this, 'bmoMemory', {
@@ -40,8 +37,6 @@ export class NewBmoStack extends cdk.Stack {
                 timeout: cdk.Duration.seconds(10),
                 runtime: lambda.Runtime.NODEJS_14_X,
                 environment: {
-                    SLACK_TOKEN: token,
-                    APP_UNAME: uname,
                     BMO_TABLE: bmoMemory.tableName,
                 },
             }

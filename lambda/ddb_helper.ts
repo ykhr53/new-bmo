@@ -109,3 +109,35 @@ export async function getAllWords() {
     }
     return allWords;
 }
+
+export async function search(query: string) {
+    const documentClient = new AWS.DynamoDB.DocumentClient();
+    let queryResult: string = '';
+    var params = {
+        TableName: BMO_TABLE,
+        ProjectionExpression: '#n, #d',
+        FilterExpression: 'contains (#d, :query) or contains (#n, :query)',
+        ExpressionAttributeNames: {
+            '#n': 'name',
+            '#d': 'description',
+        },
+        ExpressionAttributeValues: {
+            ':query': query,
+        },
+    };
+    try {
+        const data = await documentClient.scan(params).promise();
+        console.log(data.Items);
+        if (data.Items) {
+            queryResult += `「${query}」が含まれるものを見つけました！\n-----------------\n`;
+            for (let item of data.Items) {
+                if (item['name'] && item['description'])
+                    queryResult += `${item['name']}: ${item['description']}\n`;
+            }
+        }
+    } catch (err) {
+        console.log(err);
+        return 'エラーだよ';
+    }
+    return queryResult;
+}

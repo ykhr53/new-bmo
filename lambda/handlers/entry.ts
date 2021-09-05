@@ -15,6 +15,7 @@ const BMO_REGEX: RegexTable = {
     word: /\!word\s\S+/,
     words: /^\!words$/,
     add: /^\!add\s\S+/,
+    search: /\!search\s\S+/,
 };
 
 exports.handler = async function (
@@ -99,6 +100,10 @@ exports.handler = async function (
                 } else {
                     reply = await ddb.addWord(aq[0], aq[1]);
                 }
+                break;
+            case 'search':
+                const query = parseWord(message.text);
+                reply = await ddb.search(query);
                 break;
             default:
                 return HTTP_200;
