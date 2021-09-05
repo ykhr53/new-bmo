@@ -102,7 +102,6 @@ export async function getAllWords() {
     };
     try {
         const data = await documentClient.scan(params).promise();
-        console.log(data.Items);
         if (data.Items) {
             for (let item of data.Items) {
                 allWords += `${item['name']}: ${item['description']}\n`;
@@ -131,7 +130,6 @@ export async function search(query: string) {
     };
     try {
         const data = await documentClient.scan(params).promise();
-        console.log(data.Items);
         if (data.Items) {
             queryResult += `「${query}」が含まれるものを見つけました！\n-----------------\n`;
             for (let item of data.Items) {
