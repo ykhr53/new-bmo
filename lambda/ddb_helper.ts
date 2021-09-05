@@ -14,7 +14,11 @@ export async function getWord(key: string) {
     };
     try {
         const data = await documentClient.get(params).promise();
-        if (data.Item) return data.Item['description'];
+        if (data.Item && data.Item['description']) {
+            return data.Item['description'];
+        } else {
+            return `まだ登録されてないみたい。「!add ${key} comment」で登録してね！`;
+        }
     } catch (err) {
         console.log(err);
         return 'エラーだよ';
