@@ -130,7 +130,7 @@ export async function search(query: string) {
     };
     try {
         const data = await documentClient.scan(params).promise();
-        if (data.Count > 0) {
+        if (data.Count && data.Count > 0 && data.Items) {
             queryResult += `「${query}」が含まれるものを見つけました！\n-----------------\n`;
             for (let item of data.Items) {
                 if (item['name'] && item['description'])
