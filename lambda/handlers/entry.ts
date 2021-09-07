@@ -12,10 +12,10 @@ import { getSecrets } from '../secrets_helper';
 
 const BMO_REGEX: RegexTable = {
     vote: /^\S+(\+\+|--)\s/,
-    word: /\!word\s\S+/,
+    word: /^\!word\s\S+/,
     words: /^\!words$/,
     add: /^\!add\s\S+/,
-    search: /\!search\s\S+/,
+    search: /^\!search\s\S+/,
 };
 
 exports.handler = async function (
