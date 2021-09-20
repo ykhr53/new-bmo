@@ -169,7 +169,7 @@ function parseAdd(text: string): string[] {
      *  2. If an input is incorrect format
      *     -> []
      */
-    const words = text.split(' ');
+    const words = text.split(/\s/);
     const ret: string[] = [];
 
     if (words.length < 3) return ret;
