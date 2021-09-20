@@ -7,6 +7,9 @@ import * as ddb from '@aws-cdk/aws-dynamodb';
 import * as iam from '@aws-cdk/aws-iam';
 
 export class NewBmoStack extends cdk.Stack {
+    // The URL of the API Gateway endpoint, for use in the integ tests
+    public readonly urlOutput: cdk.CfnOutput;
+
     constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
@@ -64,5 +67,8 @@ export class NewBmoStack extends cdk.Stack {
             'POST',
             new apigateway.LambdaIntegration(entryLambdaFunction)
         );
+        this.urlOutput = new cdk.CfnOutput(this, 'Url', {
+            value: entryAPIG.url,
+        });
     }
 }

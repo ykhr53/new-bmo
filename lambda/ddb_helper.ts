@@ -29,13 +29,15 @@ export async function addWord(key: string, comment: string) {
     const documentClient = new AWS.DynamoDB.DocumentClient();
     const params = {
         TableName: BMO_TABLE,
-        Item: {
+        Key: {
             name: key,
-            description: comment,
         },
+        UpdateExpression: 'set #d = :c',
+        ExpressionAttributeNames: { '#d': 'description' },
+        ExpressionAttributeValues: { ':c': comment },
     };
     try {
-        await documentClient.put(params).promise();
+        await documentClient.update(params).promise();
         return '登録しました！';
     } catch (err) {
         console.log(err);
@@ -76,13 +78,15 @@ export async function vote(vd: VoteDict) {
         const vsum = currentVote[name] + vd[name];
         const params = {
             TableName: BMO_TABLE,
-            Item: {
+            Key: {
                 name: name,
-                votes: vsum,
             },
+            UpdateExpression: 'set #v = :s',
+            ExpressionAttributeNames: { '#v': 'votes' },
+            ExpressionAttributeValues: { ':s': vsum },
         };
         try {
-            await documentClient.put(params).promise();
+            await documentClient.update(params).promise();
             let total: string = '';
             if (vd[name] > 1 || vd[name] < -1)
                 total = `(got ${vd[name]} votes)`;
