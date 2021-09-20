@@ -20,30 +20,6 @@ export class BMOPipelineStack extends Stack {
         const githubToken = SecretValue.secretsManager('SlackTokenForBMO', {
             jsonField: 'GITHUB_TOKEN',
         });
-
-        // const sourceArtifact = new codepipeline.Artifact();
-        // const cloudAssemblyArtifact = new codepipeline.Artifact();
-        // const cdkpipeline = new CdkPipeline(this, 'Pipeline', {
-        //     pipelineName: 'BMOPipeline',
-        //     cloudAssemblyArtifact,
-        //     sourceAction: new codepipeline_actions.GitHubSourceAction({
-        //         actionName: 'GitHub',
-        //         output: sourceArtifact,
-        //         oauthToken: githubToken,
-        //         owner: 'ykhr53',
-        //         repo: 'new-bmo',
-        //         branch: 'mainline',
-        //     }),
-
-        //     // How it will be built and synthesized
-        //     synthAction: SimpleSynthAction.standardYarnSynth({
-        //         sourceArtifact,
-        //         cloudAssemblyArtifact,
-
-        //         // We need a build step to compile the TypeScript Lambda
-        //         buildCommand: 'yarn build',
-        //     }),
-        // });
         const pipeline = new CodePipeline(this, 'BMOPipeline', {
             pipelineName: 'BMOPipeline',
             synth: new ShellStep('Synth', {
