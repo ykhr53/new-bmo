@@ -52,7 +52,6 @@ export class BMOPipelineStack extends Stack {
                 }),
                 commands: [
                     'yarn install --frozen-lockfile',
-                    'yarn add typescript',
                     'yarn build',
                     'npx cdk synth',
                 ],
