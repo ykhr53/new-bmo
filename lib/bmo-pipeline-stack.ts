@@ -25,6 +25,7 @@ export class BMOPipelineStack extends Stack {
                 oauthToken: githubToken,
                 owner: 'ykhr53',
                 repo: 'new-bmo',
+                branch: 'mainline',
             }),
 
             // How it will be built and synthesized
