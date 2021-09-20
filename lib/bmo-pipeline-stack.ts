@@ -50,7 +50,11 @@ export class BMOPipelineStack extends Stack {
                 input: CodePipelineSource.gitHub('ykhr53/new-bmo', 'mainline', {
                     authentication: githubToken,
                 }),
-                commands: ['yarn build', 'npx cdk synth'],
+                commands: [
+                    'yarn install --frozen-lockfile',
+                    'yarn build',
+                    'npx cdk synth',
+                ],
             }),
         });
     }
