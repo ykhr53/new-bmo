@@ -8,7 +8,7 @@ import {
     ShellStep,
     CodePipelineSource,
 } from '@aws-cdk/pipelines';
-import { CDKPipelineStage } from './pipeline-stage';
+import { BMOPipelineStage } from './pipeline-stage';
 
 /**
  * The stack that defines the application pipeline
@@ -33,5 +33,7 @@ export class BMOPipelineStack extends Stack {
                 ],
             }),
         });
+
+        pipeline.addStage(new BMOPipelineStage(this, 'Prod'));
     }
 }

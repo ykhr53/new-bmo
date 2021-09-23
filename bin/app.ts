@@ -9,9 +9,9 @@ const app = new cdk.App();
 const prodAccount = process.env.CDK_DEFAULT_ACCOUNT;
 const prodRegion = process.env.CDK_DEFAULT_REGION;
 
-new NewBmoStack(app, 'NewBmoStack', {
-    env: { account: prodAccount, region: prodRegion },
-});
+// new NewBmoStack(app, 'NewBmoStack', {
+//     env: { account: prodAccount, region: prodRegion },
+// });
 
 new BMOPipelineStack(app, 'BMOPipelineStack', {
     env: { account: prodAccount, region: prodRegion },
