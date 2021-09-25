@@ -1,9 +1,5 @@
-import * as codepipeline from '@aws-cdk/aws-codepipeline';
-import * as codepipeline_actions from '@aws-cdk/aws-codepipeline-actions';
 import { Construct, SecretValue, Stack, StackProps } from '@aws-cdk/core';
 import {
-    CdkPipeline,
-    SimpleSynthAction,
     CodePipeline,
     ShellStep,
     CodePipelineSource,
@@ -17,6 +13,7 @@ export class BMOPipelineStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
+        // Pipeline
         const githubToken = SecretValue.secretsManager('SlackTokenForBMO', {
             jsonField: 'GITHUB_TOKEN',
         });
@@ -34,6 +31,16 @@ export class BMOPipelineStack extends Stack {
             }),
         });
 
-        pipeline.addStage(new BMOPipelineStage(this, 'Prod'));
+        // Deplpy Prod Stage
+        const account = props?.env?.account || process.env.CDK_DEFAULT_ACCOUNT;
+        const region = props?.env?.region || process.env.CDK_DEFAULT_REGION;
+        pipeline.addStage(
+            new BMOPipelineStage(this, 'Prod', {
+                env: {
+                    account: account,
+                    region: region,
+                },
+            })
+        );
     }
 }

@@ -12,8 +12,8 @@ export class BMOPipelineStage extends Stage {
 
         const service = new NewBmoStack(this, 'NewBmoStack', {
             env: {
-                account: process.env.CDK_DEFAULT_ACCOUNT,
-                region: process.env.CDK_DEFAULT_REGION,
+                account: props?.env?.account,
+                region: props?.env?.region,
             },
         });
 
