@@ -14,9 +14,9 @@ export class NewBmoStack extends cdk.Stack {
     // The URL of the API Gateway endpoint, for use in the integ tests
     public readonly urlOutput: cdk.CfnOutput;
 
-    constructor(scope: cdk.Construct, id: string, props: BMOStackProps) {
+    constructor(scope: cdk.Construct, id: string, props?: BMOStackProps) {
         super(scope, id, props);
-        const stage = props.stage;
+        const stage = props?.stage || 'default';
 
         // Secrets Manager
         const secret = secretsmanager.Secret.fromSecretNameV2(
