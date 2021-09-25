@@ -7,14 +7,15 @@ import { NewBmoStack } from './new-bmo-stack';
 export class BMOPipelineStage extends Stage {
     public readonly urlOutput: CfnOutput;
 
-    constructor(scope: Construct, id: string, props?: StageProps) {
+    constructor(scope: Construct, id: string, props: StageProps) {
         super(scope, id, props);
 
         const service = new NewBmoStack(this, 'NewBmoStack', {
             env: {
-                account: props?.env?.account,
-                region: props?.env?.region,
+                account: props.env?.account,
+                region: props.env?.region,
             },
+            stage: id,
         });
 
         // Expose NewBmoStack's output one level higher

@@ -6,12 +6,17 @@ import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
 import * as ddb from '@aws-cdk/aws-dynamodb';
 import * as iam from '@aws-cdk/aws-iam';
 
+export interface BMOStackProps extends cdk.StackProps {
+    readonly stage: string;
+}
+
 export class NewBmoStack extends cdk.Stack {
     // The URL of the API Gateway endpoint, for use in the integ tests
     public readonly urlOutput: cdk.CfnOutput;
 
-    constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
+    constructor(scope: cdk.Construct, id: string, props: BMOStackProps) {
         super(scope, id, props);
+        const stage = props.stage;
 
         // Secrets Manager
         const secret = secretsmanager.Secret.fromSecretNameV2(
@@ -26,15 +31,15 @@ export class NewBmoStack extends cdk.Stack {
                 name: 'name',
                 type: ddb.AttributeType.STRING,
             },
-            tableName: 'bmo-memory',
+            tableName: `BMO-DDB-${stage}`,
         });
 
         // Lambda
         const entryLambdaFunction = new nodejs.NodejsFunction(
             this,
-            'BMO-entry-Lambda',
+            `BMO-Lambda-${stage}`,
             {
-                functionName: `BMO-entry-Lambda`,
+                functionName: `BMO-Lambda-${stage}`,
                 entry: 'lambda/handlers/entry.ts',
                 memorySize: 128,
                 timeout: cdk.Duration.seconds(10),
@@ -60,7 +65,7 @@ export class NewBmoStack extends cdk.Stack {
         secret.grantRead(entryLambdaFunction);
 
         // API Gateway
-        const entryAPIG = new apigateway.RestApi(this, 'BMO-APIG', {
+        const entryAPIG = new apigateway.RestApi(this, `BMO-APIG-${stage}`, {
             cloudWatchRole: false,
         });
         entryAPIG.root.addMethod(
