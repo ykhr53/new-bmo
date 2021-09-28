@@ -3,10 +3,10 @@ import { Aws } from '@aws-cdk/core';
 export const BMO_STAGES = {
     Prod: {
         ACCOUNT: Aws.ACCOUNT_ID,
-        REGION: 'us-west-2',
+        REGION: 'ap-northeast-1',
     },
     Dev: {
         ACCOUNT: Aws.ACCOUNT_ID,
-        REGION: 'us-east-1',
+        REGION: 'us-west-2',
     },
 };
