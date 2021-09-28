@@ -5,7 +5,6 @@ import {
     CodePipelineSource,
 } from '@aws-cdk/pipelines';
 import { BMOPipelineStage } from './pipeline-stage';
-import { BMO_STAGES } from './configuration';
 
 /**
  * The stack that defines the application pipeline
@@ -32,11 +31,14 @@ export class BMOPipelineStack extends Stack {
             }),
         });
 
+        const account = props?.env?.account || process.env.CDK_DEFAULT_ACCOUNT;
+        const region = props?.env?.region || process.env.CDK_DEFAULT_REGION;
+
         // Deplpy Dev Stage
         const devBMO = new BMOPipelineStage(this, 'Dev', {
             env: {
-                account: BMO_STAGES.Dev.ACCOUNT,
-                region: BMO_STAGES.Dev.REGION,
+                account: account,
+                region: region,
             },
         });
         pipeline.addStage(devBMO);
@@ -52,8 +54,8 @@ export class BMOPipelineStack extends Stack {
         // Deplpy Prod Stage
         const prodBMO = new BMOPipelineStage(this, 'Prod', {
             env: {
-                account: BMO_STAGES.Prod.ACCOUNT,
-                region: BMO_STAGES.Prod.REGION,
+                account: account,
+                region: region,
             },
         });
         pipeline.addStage(prodBMO);
