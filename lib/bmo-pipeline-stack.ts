@@ -44,11 +44,14 @@ export class BMOPipelineStack extends Stack {
         pipeline.addStage(devBMO);
 
         // Test ShellStep
+        // ToDo: Add some "real" test
         const curlTest = new ShellStep('curlTest', {
             envFromCfnOutputs: {
                 ENDPOINT: devBMO.urlOutput,
             },
-            commands: ['curl $ENDPOINT'],
+            commands: [
+                'curl -sS -X POST -H "Content-Type: application/json" -d \'{"challenge":"somechallengemessage"}\' $ENDPOINT',
+            ],
         });
 
         // Deplpy Prod Stage
@@ -58,6 +61,8 @@ export class BMOPipelineStack extends Stack {
                 region: region,
             },
         });
-        pipeline.addStage(prodBMO);
+        pipeline.addStage(prodBMO, {
+            pre: [curlTest],
+        });
     }
 }
