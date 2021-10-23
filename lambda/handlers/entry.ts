@@ -61,64 +61,71 @@ exports.handler = async function (
     const slack = new WebClient(SLACK_TOKEN);
     const message: SlackMessage = getMessage(lambdaEvent);
 
-    if (isBMO(message, APP_UNAME)) {
+    if (!isBMO(message, APP_UNAME)) {
         // Return immediately if the message is posted by BMO
         return HTTP_200;
-    } else {
-        console.log(message.text);
-        const commentType = searchRegex(message);
-        let reply = '';
-        switch (commentType) {
-            case 'vote':
-                const vd = parseVote(message.text);
-                reply = await ddb.vote(vd);
-                break;
-            case 'word':
-                const wq = parseWord(message.text);
-                const wa = await ddb.getWord(wq);
-                reply = `${wq}: ${wa}`;
-                break;
-            case 'words':
-                const allWords = await ddb.getAllWords();
-                const fp = {
-                    title: 'BMO word list',
-                    filename: 'words',
-                    filetype: 'post',
-                    content: allWords,
-                };
-                const result = await slack.files.upload(fp);
-                if (result.file && result.file.permalink) {
-                    reply = result.file.permalink;
-                } else {
-                    reply = 'エラーだよ';
-                }
-                break;
-            case 'add':
-                const aq = parseAdd(message.text);
-                if (aq.length < 2) {
-                    reply = 'コマンドがおかしいみたい';
-                } else {
-                    reply = await ddb.addWord(aq[0], aq[1]);
-                }
-                break;
-            case 'search':
-                const query = parseWord(message.text);
-                reply = await ddb.search(query);
-                break;
-            default:
-                return HTTP_200;
-        }
+    }
+
+    console.log(message.text);
+    await behaiveReaction(message, slack);
+    return HTTP_200;
+};
+
+async function behaiveReaction(
+    incomingMessage: SlackMessage,
+    slack: WebClient
+) {
+    const commentType = searchRegex(incomingMessage);
+    let reply = '';
+    switch (commentType) {
+        case 'vote':
+            const vd = parseVote(incomingMessage.text);
+            reply = await ddb.vote(vd);
+            break;
+        case 'word':
+            const wq = parseWord(incomingMessage.text);
+            const wa = await ddb.getWord(wq);
+            reply = `${wq}: ${wa}`;
+            break;
+        case 'words':
+            const allWords = await ddb.getAllWords();
+            const fp = {
+                title: 'BMO word list',
+                filename: 'words',
+                filetype: 'post',
+                content: allWords,
+            };
+            const result = await slack.files.upload(fp);
+            if (result.file && result.file.permalink) {
+                reply = result.file.permalink;
+            } else {
+                reply = 'エラーだよ';
+            }
+            break;
+        case 'add':
+            const aq = parseAdd(incomingMessage.text);
+            if (aq.length < 2) {
+                reply = 'コマンドがおかしいみたい';
+            } else {
+                reply = await ddb.addWord(aq[0], aq[1]);
+            }
+            break;
+        case 'search':
+            const query = parseWord(incomingMessage.text);
+            reply = await ddb.search(query);
+            break;
+    }
+    if (reply) {
         try {
             await slack.chat.postMessage({
-                channel: message.channel,
+                channel: incomingMessage.channel,
                 text: reply,
             });
         } catch (err) {
             console.log(err);
         }
     }
-    return HTTP_200;
-};
+}
 
 function getMessage(lambdaEvent: { [key: string]: any }): SlackMessage {
     const defaultMessage: SlackMessage = {
