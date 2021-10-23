@@ -61,7 +61,7 @@ exports.handler = async function (
     const slack = new WebClient(SLACK_TOKEN);
     const message: SlackMessage = getMessage(lambdaEvent);
 
-    if (!isBMO(message, APP_UNAME)) {
+    if (isBMO(message, APP_UNAME)) {
         // Return immediately if the message is posted by BMO
         return HTTP_200;
     }
