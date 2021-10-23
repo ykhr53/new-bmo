@@ -67,14 +67,11 @@ exports.handler = async function (
     }
 
     console.log(message.text);
-    await behaiveReaction(message, slack);
+    await behaveReaction(message, slack);
     return HTTP_200;
 };
 
-async function behaiveReaction(
-    incomingMessage: SlackMessage,
-    slack: WebClient
-) {
+async function behaveReaction(incomingMessage: SlackMessage, slack: WebClient) {
     const reactionType = findReactionType(incomingMessage);
     let reply = '';
     switch (reactionType) {
