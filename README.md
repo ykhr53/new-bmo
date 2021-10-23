@@ -1,21 +1,19 @@
 # Prerequisites
 
-## Environment Variables
+## GitHub personal access token
 
-Before you build/deploy the CDK package, you need to specify a target account id and a region.
+You need **repo** and **admin:repo_hook** permissions.
 
-```
-export CDK_DEPLOY_ACCOUNT=<AWS ACCOUNT ID>
-export CDK_DEPLOY_REGION=<REGOIN>
-```
+-   [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
-## Secret Manager
+## Secrets Manager
 
 You need to store your App's slack token and user name in a Secrets Manager secret named 'SlackTokenForBMO'.
 
 ```
 SLACK_TOKEN: <App's slack token> (something begins with xoxb- or xoxp-)
 APP_UNAME: <App's user name> (something like U01234ABCDE)
+GITHUB_TOKEN: <GitHub access token>
 ```
 
 # Features
