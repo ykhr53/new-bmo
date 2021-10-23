@@ -67,38 +67,59 @@ exports.handler = async function (
     }
 
     console.log(message.text);
-    await behaiveReaction(message, slack);
+    await behaveReaction(message, slack);
     return HTTP_200;
 };
 
-async function behaiveReaction(
-    incomingMessage: SlackMessage,
-    slack: WebClient
-) {
+async function behaveReaction(incomingMessage: SlackMessage, slack: WebClient) {
     const reactionType = findReactionType(incomingMessage);
     let reply = '';
     switch (reactionType) {
         case 'vote':
             const vd = parseVote(incomingMessage.text);
-            reply = await ddb.vote(vd);
+            const newVote: VoteDict = await ddb.vote(vd);
+            for (let name in newVote) {
+                let diffMessage = '';
+                if (vd[name] > 1 || vd[name] < -1)
+                    diffMessage = `(got ${vd[name]} votes)`;
+                reply += `${name}: ${newVote[name]} voted! ${diffMessage}\n`;
+            }
             break;
         case 'word':
             const wq = parseWord(incomingMessage.text);
-            const wa = await ddb.getWord(wq);
-            reply = `${wq}: ${wa}`;
+            try {
+                const word = await ddb.getWord(wq);
+                if (word.description !== undefined) {
+                    reply = `${wq}: ${word.description}`;
+                } else {
+                    reply = `まだ登録されてないみたい。「!add ${wq} comment」で登録してね！`;
+                }
+            } catch (err) {
+                console.error(err);
+                reply = 'エラーだよ';
+            }
             break;
         case 'words':
-            const allWords = await ddb.getAllWords();
-            const fp = {
-                title: 'BMO word list',
-                filename: 'words',
-                filetype: 'post',
-                content: allWords,
-            };
-            const result = await slack.files.upload(fp);
-            if (result.file && result.file.permalink) {
-                reply = result.file.permalink;
-            } else {
+            try {
+                const words = await ddb.getAllWords();
+                let allWordsMessage = '';
+                for (let word of words) {
+                    allWordsMessage += `${word.name}: ${word.description}\n`;
+                }
+                const fp = {
+                    title: 'BMO word list',
+                    filename: 'words',
+                    filetype: 'post',
+                    content: allWordsMessage,
+                };
+                const result = await slack.files.upload(fp);
+                if (result.file && result.file.permalink) {
+                    reply = result.file.permalink;
+                } else {
+                    reply = 'エラーだよ';
+                }
+            } catch (err) {
+                console.error(err);
                 reply = 'エラーだよ';
             }
             break;
@@ -107,12 +128,31 @@ async function behaiveReaction(
             if (aq.length < 2) {
                 reply = 'コマンドがおかしいみたい';
             } else {
-                reply = await ddb.addWord(aq[0], aq[1]);
+                try {
+                    await ddb.addWord(aq[0], aq[1]);
+                    reply = '登録しました！';
+                } catch (err) {
+                    console.log(err);
+                    reply = '登録に失敗しました';
+                }
             }
             break;
         case 'search':
             const query = parseWord(incomingMessage.text);
-            reply = await ddb.search(query);
+            try {
+                const resultWords = await ddb.search(query);
+                if (resultWords.length > 0) {
+                    reply += `「${query}」が含まれるものを見つけました！\n-----------------\n`;
+                    for (let word of resultWords) {
+                        reply += `${word.name}: ${word.description}\n`;
+                    }
+                } else {
+                    reply += `「${query}」が含まれるものは見つかりませんでした:cry:\n`;
+                }
+            } catch (err) {
+                console.error(err);
+                reply = 'エラーだよ';
+            }
             break;
     }
 
