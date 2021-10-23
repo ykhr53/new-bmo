@@ -108,7 +108,6 @@ export async function getAllWords() {
 
 export async function search(query: string) {
     const documentClient = new AWS.DynamoDB.DocumentClient();
-    let queryResult: string = '';
     var params = {
         TableName: BMO_TABLE,
         ProjectionExpression: '#n, #d',
@@ -121,22 +120,12 @@ export async function search(query: string) {
             ':query': query,
         },
     };
-    try {
-        const data = await documentClient.scan(params).promise();
-        if (data.Count && data.Count > 0 && data.Items) {
-            queryResult += `「${query}」が含まれるものを見つけました！\n-----------------\n`;
-            for (let item of data.Items) {
-                if (item['name'] && item['description'])
-                    queryResult += `${item['name']}: ${item['description']}\n`;
-            }
-        } else {
-            queryResult += `「${query}」が含まれるものは見つかりませんでした:cry:\n`;
-        }
-    } catch (err) {
-        console.log(err);
-        return 'エラーだよ';
+    const data = await documentClient.scan(params).promise();
+    if (data.Count && data.Count > 0 && data.Items) {
+        return formatWords(data.Items);
+    } else {
+        return [];
     }
-    return queryResult;
 }
 
 // Format result to array of { name: string; description: string }

@@ -137,7 +137,19 @@ async function behaiveReaction(
             break;
         case 'search':
             const query = parseWord(incomingMessage.text);
-            reply = await ddb.search(query);
+            try {
+                const resultWords = await ddb.search(query);
+                if (resultWords.length > 0) {
+                    reply += `「${query}」が含まれるものを見つけました！\n-----------------\n`;
+                    for (let word of resultWords) {
+                        reply += `${word.name}: ${word.description}\n`;
+                    }
+                } else {
+                    reply += `「${query}」が含まれるものは見つかりませんでした:cry:\n`;
+                }
+            } catch (err) {
+                reply = 'エラーだよ';
+            }
             break;
     }
 
