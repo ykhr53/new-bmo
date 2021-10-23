@@ -1,5 +1,5 @@
 import type { Behavior, Reaction } from '../../types';
-import { getWord, getAllWords, addWord, search } from '../../ddb_helper';
+import { getWord, getAllWords, addWord, search } from '../ddb_helper';
 import { WebClient } from '@slack/web-api';
 
 /*

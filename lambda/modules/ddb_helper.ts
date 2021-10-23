@@ -1,4 +1,4 @@
-import { VoteDict } from './types';
+import { VoteDict } from '../types';
 import * as AWS from 'aws-sdk';
 
 const BMO_TABLE = process.env.BMO_TABLE || '';

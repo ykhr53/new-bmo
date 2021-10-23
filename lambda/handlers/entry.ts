@@ -4,9 +4,9 @@ import {
     SlackMessage,
     ReactionContext,
 } from '../types';
-import { HTTP_200, HTTP_400 } from '../response_templates';
+import { HTTP_200, HTTP_400 } from '../modules/response_templates';
 import { WebClient } from '@slack/web-api';
-import { getSecrets } from '../secrets_helper';
+import { getSecrets } from '../modules/secrets_helper';
 import { behaviors } from '../modules/behaviors';
 
 exports.handler = async function (

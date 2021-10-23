@@ -1,5 +1,5 @@
 import type { Behavior, Reaction, VoteDict } from '../../types';
-import { vote } from '../../ddb_helper';
+import { vote } from '../ddb_helper';
 
 function parseVote(text: string): VoteDict {
     let votes: VoteDict = {};
