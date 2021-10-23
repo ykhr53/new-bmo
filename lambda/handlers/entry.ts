@@ -103,21 +103,26 @@ async function behaiveReaction(
             }
             break;
         case 'words':
-            const words = await ddb.getAllWords();
-            let allWordsMessage = '';
-            for (let word of words) {
-                allWordsMessage += `${word.name}: ${word.description}\n`;
-            }
-            const fp = {
-                title: 'BMO word list',
-                filename: 'words',
-                filetype: 'post',
-                content: allWordsMessage,
-            };
-            const result = await slack.files.upload(fp);
-            if (result.file && result.file.permalink) {
-                reply = result.file.permalink;
-            } else {
+            try {
+                const words = await ddb.getAllWords();
+                let allWordsMessage = '';
+                for (let word of words) {
+                    allWordsMessage += `${word.name}: ${word.description}\n`;
+                }
+                const fp = {
+                    title: 'BMO word list',
+                    filename: 'words',
+                    filetype: 'post',
+                    content: allWordsMessage,
+                };
+                const result = await slack.files.upload(fp);
+                if (result.file && result.file.permalink) {
+                    reply = result.file.permalink;
+                } else {
+                    reply = 'エラーだよ';
+                }
+            } catch (err) {
+                console.error(err);
                 reply = 'エラーだよ';
             }
             break;
@@ -148,6 +153,7 @@ async function behaiveReaction(
                     reply += `「${query}」が含まれるものは見つかりませんでした:cry:\n`;
                 }
             } catch (err) {
+                console.error(err);
                 reply = 'エラーだよ';
             }
             break;
