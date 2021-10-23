@@ -80,7 +80,13 @@ async function behaiveReaction(
     switch (reactionType) {
         case 'vote':
             const vd = parseVote(incomingMessage.text);
-            reply = await ddb.vote(vd);
+            const newVote: VoteDict = await ddb.vote(vd);
+            for (let name in newVote) {
+                let diffMessage = '';
+                if (vd[name] > 1 || vd[name] < -1)
+                    diffMessage = `(got ${vd[name]} votes)`;
+                reply += `${name}: ${newVote[name]} voted! ${diffMessage}\n`;
+            }
             break;
         case 'word':
             const wq = parseWord(incomingMessage.text);

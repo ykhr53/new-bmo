@@ -71,7 +71,7 @@ export async function getVote(vd: VoteDict) {
 export async function vote(vd: VoteDict) {
     const documentClient = new AWS.DynamoDB.DocumentClient();
     const currentVote: VoteDict = await getVote(vd);
-    let reply: string = '';
+    const newVote: VoteDict = {};
     for (let name in vd) {
         const vsum = currentVote[name] + vd[name];
         const params = {
@@ -85,15 +85,12 @@ export async function vote(vd: VoteDict) {
         };
         try {
             await documentClient.update(params).promise();
-            let total: string = '';
-            if (vd[name] > 1 || vd[name] < -1)
-                total = `(got ${vd[name]} votes)`;
-            reply += `${name}: ${vsum} voted! ${total}\n`;
+            newVote[name] = vsum;
         } catch (err) {
             console.log(err);
         }
     }
-    return reply;
+    return newVote;
 }
 
 export async function getAllWords() {
