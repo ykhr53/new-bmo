@@ -75,9 +75,9 @@ async function behaiveReaction(
     incomingMessage: SlackMessage,
     slack: WebClient
 ) {
-    const commentType = searchRegex(incomingMessage);
+    const reactionType = findReactionType(incomingMessage);
     let reply = '';
-    switch (commentType) {
+    switch (reactionType) {
         case 'vote':
             const vd = parseVote(incomingMessage.text);
             reply = await ddb.vote(vd);
@@ -150,7 +150,7 @@ function isBMO(message: SlackMessage, appuname: string): boolean {
     return message.user == appuname;
 }
 
-function searchRegex(message: SlackMessage): string {
+function findReactionType(message: SlackMessage): string {
     const text = message.text;
     for (let key in BMO_REGEX) {
         if (text.match(BMO_REGEX[key]) != null) {
