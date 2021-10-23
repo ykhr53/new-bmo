@@ -95,21 +95,15 @@ export async function vote(vd: VoteDict) {
 
 export async function getAllWords() {
     const documentClient = new AWS.DynamoDB.DocumentClient();
-    let allWords: string = '';
     const params = {
         TableName: BMO_TABLE,
     };
-    try {
-        const data = await documentClient.scan(params).promise();
-        if (data.Items) {
-            for (let item of data.Items) {
-                allWords += `${item['name']}: ${item['description']}\n`;
-            }
-        }
-    } catch (err) {
-        console.log(err);
+    const data = await documentClient.scan(params).promise();
+    if (data.Items) {
+        return formatWords(data.Items);
+    } else {
+        return [];
     }
-    return allWords;
 }
 
 export async function search(query: string) {
@@ -143,4 +137,17 @@ export async function search(query: string) {
         return 'エラーだよ';
     }
     return queryResult;
+}
+
+// Format result to array of { name: string; description: string }
+function formatWords(wordItems: AWS.DynamoDB.DocumentClient.ItemList) {
+    return wordItems
+        .filter((item) => item['name'] && item['description'])
+        .map(
+            (item) =>
+                ({
+                    name: item['name'].toString(),
+                    description: item['description'].toString(),
+                } as { name: string; description: string })
+        );
 }

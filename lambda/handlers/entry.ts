@@ -103,12 +103,16 @@ async function behaiveReaction(
             }
             break;
         case 'words':
-            const allWords = await ddb.getAllWords();
+            const words = await ddb.getAllWords();
+            let allWordsMessage = '';
+            for (let word of words) {
+                allWordsMessage += `${word.name}: ${word.description}\n`;
+            }
             const fp = {
                 title: 'BMO word list',
                 filename: 'words',
                 filetype: 'post',
-                content: allWords,
+                content: allWordsMessage,
             };
             const result = await slack.files.upload(fp);
             if (result.file && result.file.permalink) {
