@@ -115,6 +115,8 @@ async function behaiveReaction(
             reply = await ddb.search(query);
             break;
     }
+
+    // Post a reply message to slack if it is not empty
     if (reply) {
         try {
             await slack.chat.postMessage({
