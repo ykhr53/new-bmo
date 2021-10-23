@@ -84,8 +84,17 @@ async function behaiveReaction(
             break;
         case 'word':
             const wq = parseWord(incomingMessage.text);
-            const wa = await ddb.getWord(wq);
-            reply = `${wq}: ${wa}`;
+            try {
+                const word = await ddb.getWord(wq);
+                if (word.description !== undefined) {
+                    reply = `${wq}: ${word.description}`;
+                } else {
+                    reply = `まだ登録されてないみたい。「!add ${wq} comment」で登録してね！`;
+                }
+            } catch (err) {
+                console.error(err);
+                reply = 'エラーだよ';
+            }
             break;
         case 'words':
             const allWords = await ddb.getAllWords();
@@ -107,7 +116,13 @@ async function behaiveReaction(
             if (aq.length < 2) {
                 reply = 'コマンドがおかしいみたい';
             } else {
-                reply = await ddb.addWord(aq[0], aq[1]);
+                try {
+                    await ddb.addWord(aq[0], aq[1]);
+                    reply = '登録しました！';
+                } catch (err) {
+                    console.log(err);
+                    reply = '登録に失敗しました';
+                }
             }
             break;
         case 'search':

@@ -3,7 +3,10 @@ import * as AWS from 'aws-sdk';
 
 const BMO_TABLE = process.env.BMO_TABLE || '';
 
-export async function getWord(key: string) {
+export async function getWord(key: string): Promise<{
+    key: string;
+    description: string | undefined;
+}> {
     const documentClient = new AWS.DynamoDB.DocumentClient();
     const params = {
         TableName: BMO_TABLE,
@@ -12,16 +15,17 @@ export async function getWord(key: string) {
         },
         AttributesToGet: ['description'],
     };
-    try {
-        const data = await documentClient.get(params).promise();
-        if (data.Item && data.Item['description']) {
-            return data.Item['description'];
-        } else {
-            return `まだ登録されてないみたい。「!add ${key} comment」で登録してね！`;
-        }
-    } catch (err) {
-        console.log(err);
-        return 'エラーだよ';
+    const data = await documentClient.get(params).promise();
+    if (data.Item && data.Item['description']) {
+        return {
+            key,
+            description: data.Item['description'],
+        };
+    } else {
+        return {
+            key,
+            description: undefined,
+        };
     }
 }
 
@@ -36,13 +40,7 @@ export async function addWord(key: string, comment: string) {
         ExpressionAttributeNames: { '#d': 'description' },
         ExpressionAttributeValues: { ':c': comment },
     };
-    try {
-        await documentClient.update(params).promise();
-        return '登録しました！';
-    } catch (err) {
-        console.log(err);
-        return '登録に失敗しました';
-    }
+    await documentClient.update(params).promise();
 }
 
 export async function getVote(vd: VoteDict) {
