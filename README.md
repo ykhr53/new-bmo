@@ -6,6 +6,13 @@ You need **repo** and **admin:repo_hook** permissions.
 
 -   [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token)
 
+## Chatbot for Slack notification
+
+We use Slack notification with [AWS Chatbot](https://aws.amazon.com/chatbot/) for monitoring Pipeline events.
+You need to create a Chatbot slack client in advance to enable slack notification.
+
+-   [Configure an AWS Chatbot client for a slack channel](https://docs.aws.amazon.com/dtconsole/latest/userguide/notifications-chatbot.html#notifications-chatbot-configure-client)
+
 ## Secrets Manager
 
 You need to store your App's slack token and user name in a Secrets Manager secret named 'SlackTokenForBMO'.
@@ -14,6 +21,8 @@ You need to store your App's slack token and user name in a Secrets Manager secr
 SLACK_TOKEN: <App's slack token> (something begins with xoxb- or xoxp-)
 APP_UNAME: <App's user name> (something like U01234ABCDE)
 GITHUB_TOKEN: <GitHub access token>
+SLACK_WS_ID: <Slack WorkSpace ID for notification>
+SLACK_CHANNEL_ID: <Slack Channel ID for notification>
 ```
 
 # Features

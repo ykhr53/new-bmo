@@ -1,9 +1,19 @@
-import { Construct, SecretValue, Stack, StackProps } from '@aws-cdk/core';
+import {
+    Arn,
+    ArnFormat,
+    ConcreteDependable,
+    Construct,
+    SecretValue,
+    Stack,
+    StackProps,
+} from '@aws-cdk/core';
 import {
     CodePipeline,
     ShellStep,
     CodePipelineSource,
 } from '@aws-cdk/pipelines';
+import { SlackChannelConfiguration } from '@aws-cdk/aws-chatbot';
+import { CfnNotificationRule } from '@aws-cdk/aws-codestarnotifications';
 import { BMOPipelineStage } from './pipeline-stage';
 
 /**
@@ -13,12 +23,22 @@ export class BMOPipelineStack extends Stack {
     constructor(scope: Construct, id: string, props?: StackProps) {
         super(scope, id, props);
 
-        // Pipeline
+        const pipelineName = 'BMOPipeline';
+
+        // Retrive values from Secrets Manager
         const githubToken = SecretValue.secretsManager('SlackTokenForBMO', {
             jsonField: 'GITHUB_TOKEN',
         });
+        const workspaceId = SecretValue.secretsManager('SlackTokenForBMO', {
+            jsonField: 'SLACK_WS_ID',
+        }).toString();
+        const channelId = SecretValue.secretsManager('SlackTokenForBMO', {
+            jsonField: 'SLACK_CHANNEL_ID',
+        }).toString();
+
+        // Pipeline definition
         const pipeline = new CodePipeline(this, 'BMOPipeline', {
-            pipelineName: 'BMOPipeline',
+            pipelineName: pipelineName,
             synth: new ShellStep('Synth', {
                 input: CodePipelineSource.gitHub('ykhr53/new-bmo', 'mainline', {
                     authentication: githubToken,
@@ -64,5 +84,45 @@ export class BMOPipelineStack extends Stack {
         pipeline.addStage(prodBMO, {
             pre: [curlTest],
         });
+
+        // Chatbot for Slack notification
+        const slackChannel = new SlackChannelConfiguration(
+            this,
+            'NotificationSlackChannel',
+            {
+                slackChannelConfigurationName: 'BMOSlackNotifCh',
+                slackWorkspaceId: workspaceId,
+                slackChannelId: channelId,
+            }
+        );
+
+        // Notification setting
+        const rule = new CfnNotificationRule(this, 'NotificationRule', {
+            name: 'BMONotifRule',
+            detailType: 'FULL',
+            eventTypeIds: [
+                'codepipeline-pipeline-stage-execution-failed',
+                'codepipeline-pipeline-pipeline-execution-succeeded',
+            ],
+            resource: Arn.format(
+                {
+                    resource: pipelineName,
+                    service: 'codepipline',
+                },
+                this
+            ),
+            targets: [
+                {
+                    targetType: 'AWSChatbotSlack',
+                    targetAddress: slackChannel.slackChannelConfigurationArn,
+                },
+            ],
+        });
+
+        // Configure resource creation order
+        const ruleDependencies = new ConcreteDependable();
+        ruleDependencies.add(pipeline);
+        ruleDependencies.add(slackChannel);
+        rule.node.addDependency(ruleDependencies);
     }
 }
