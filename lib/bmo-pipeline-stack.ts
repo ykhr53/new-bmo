@@ -110,7 +110,7 @@ export class BMOPipelineStack extends Stack {
                 Arn.format(
                     {
                         resource: pipelineName,
-                        service: 'codepipline',
+                        service: 'codepipeline',
                     },
                     this
                 )
