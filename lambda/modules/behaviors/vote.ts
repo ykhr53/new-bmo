@@ -1,7 +1,12 @@
 import type { Behavior, Reaction, VoteDict } from '../../types';
 import { vote } from '../ddb_helper';
 
-function parseVote(text: string): VoteDict {
+/*
+ * ++/-- command
+ */
+
+// Export for test
+export function parseVote(text: string): VoteDict {
     let votes: VoteDict = {};
     const regex = /\S+(\+\+|--)\s/g;
     const names = text.match(regex);
@@ -19,18 +24,16 @@ function parseVote(text: string): VoteDict {
     return votes;
 }
 
-/*
- * ++/-- command
- */
-const generateVoteReply = (
+// Export for test
+export const generateVoteReply = (
     beforeVote: VoteDict,
     afterVote: VoteDict
 ): string => {
     let reply = '';
     for (let name in afterVote) {
+        const diff = afterVote[name] - beforeVote[name];
         let diffMessage = '';
-        if (beforeVote[name] > 1 || beforeVote[name] < -1)
-            diffMessage = `(got ${beforeVote[name]} votes)`;
+        if (diff > 1 || diff < -1) diffMessage = `(got ${diff} votes)`;
         reply += `${name}: ${afterVote[name]} voted! ${diffMessage}\n`;
     }
     return reply;
