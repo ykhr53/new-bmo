@@ -5,7 +5,9 @@ import { WebClient } from '@slack/web-api';
 /*
  * word command
  */
-const parseWord = (text: string): string => {
+
+// Export fot test
+export const parseWord = (text: string): string => {
     const words = text.split(' ');
     if (words.length > 1) {
         return words[1];
@@ -13,7 +15,8 @@ const parseWord = (text: string): string => {
     return '';
 };
 
-const generateWordReply = (word: {
+// Export for test
+export const generateWordReply = (word: {
     key: string;
     description: string | undefined;
 }): string => {
@@ -112,7 +115,9 @@ export const wordsBehavior: Behavior = {
 /*
  * add command
  */
-const parseAdd = (text: string): string[] => {
+
+// Export for test
+export const parseAdd = (text: string): string[] => {
     /**
      *  Return structure will be...
      *  1. If an input has '!add', 'key', and 'comment'
@@ -168,7 +173,9 @@ export const addBehavior: Behavior = {
 /*
  * search command
  */
-const generateSearchReply = (
+
+// Export for test
+export const generateSearchReply = (
     query: string,
     words: {
         name: string;
