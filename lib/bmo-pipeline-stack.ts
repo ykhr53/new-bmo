@@ -12,8 +12,9 @@ import {
     ShellStep,
     CodePipelineSource,
 } from '@aws-cdk/pipelines';
+import { Pipeline } from '@aws-cdk/aws-codepipeline';
 import { SlackChannelConfiguration } from '@aws-cdk/aws-chatbot';
-import { CfnNotificationRule } from '@aws-cdk/aws-codestarnotifications';
+import { NotificationRule } from '@aws-cdk/aws-codestarnotifications';
 import { BMOPipelineStage } from './pipeline-stage';
 
 /**
@@ -97,26 +98,24 @@ export class BMOPipelineStack extends Stack {
         );
 
         // Notification setting
-        const rule = new CfnNotificationRule(this, 'NotificationRule', {
-            name: 'BMONotifRule',
-            detailType: 'FULL',
-            eventTypeIds: [
+        const rule = new NotificationRule(this, 'NotificationRule', {
+            notificationRuleName: 'BMONotifRule',
+            events: [
                 'codepipeline-pipeline-stage-execution-failed',
                 'codepipeline-pipeline-pipeline-execution-succeeded',
             ],
-            resource: Arn.format(
-                {
-                    resource: pipelineName,
-                    service: 'codepipline',
-                },
-                this
+            source: Pipeline.fromPipelineArn(
+                this,
+                'importedPipeline',
+                Arn.format(
+                    {
+                        resource: pipelineName,
+                        service: 'codepipline',
+                    },
+                    this
+                )
             ),
-            targets: [
-                {
-                    targetType: 'AWSChatbotSlack',
-                    targetAddress: slackChannel.slackChannelConfigurationArn,
-                },
-            ],
+            targets: [slackChannel],
         });
 
         // Configure resource creation order
