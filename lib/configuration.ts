@@ -1,12 +1,8 @@
-import { Aws } from '@aws-cdk/core';
-
-export const BMO_STAGES = {
+export const BMO_CONFIG = {
     Prod: {
-        ACCOUNT: Aws.ACCOUNT_ID,
         REGION: 'ap-northeast-1',
     },
     Dev: {
-        ACCOUNT: Aws.ACCOUNT_ID,
-        REGION: 'us-west-2',
+        REGION: 'ap-northeast-1',
     },
 };

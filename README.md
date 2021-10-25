@@ -25,6 +25,11 @@ SLACK_WS_ID: <Slack WorkSpace ID for notification>
 SLACK_CHANNEL_ID: <Slack Channel ID for notification>
 ```
 
+## Deploy target region (Optional)
+
+Please specify deploy target regions in `lib/configuration.ts`.
+By default, BMO deploys a pipeline to Prod stage's region.
+
 # Features
 
 ## vote
