@@ -59,29 +59,40 @@ describe('vote: parseVote', () => {
 
 describe('vote: generateVoteReply', () => {
     it('can generate increment', () => {
-        const beforeVote = {
+        const diffVote = {
             tom: 1,
         };
         const afterVote = {
             tom: 3,
         };
-        const result = generateVoteReply(beforeVote, afterVote);
+        const result = generateVoteReply(diffVote, afterVote);
+        expect(result).toBe('tom: 3 voted! \n');
+    });
+
+    it('can generate increment 2', () => {
+        const diffVote = {
+            tom: 2,
+        };
+        const afterVote = {
+            tom: 3,
+        };
+        const result = generateVoteReply(diffVote, afterVote);
         expect(result).toBe('tom: 3 voted! (got 2 votes)\n');
     });
 
     it('can generate decrement', () => {
-        const beforeVote = {
+        const diffVote = {
             bob: 2,
         };
         const afterVote = {
             bob: -1,
         };
-        const result = generateVoteReply(beforeVote, afterVote);
-        expect(result).toBe('bob: -1 voted! (got -3 votes)\n');
+        const result = generateVoteReply(diffVote, afterVote);
+        expect(result).toBe('bob: -1 voted! (got 2 votes)\n');
     });
 
     it('can generate multi persons', () => {
-        const beforeVote = {
+        const diffVote = {
             bob: 2,
             tom: 1,
         };
@@ -89,9 +100,7 @@ describe('vote: generateVoteReply', () => {
             bob: -1,
             tom: 3,
         };
-        const result = generateVoteReply(beforeVote, afterVote);
-        expect(result).toBe(
-            'bob: -1 voted! (got -3 votes)\ntom: 3 voted! (got 2 votes)\n'
-        );
+        const result = generateVoteReply(diffVote, afterVote);
+        expect(result).toBe('bob: -1 voted! (got 2 votes)\ntom: 3 voted! \n');
     });
 });
