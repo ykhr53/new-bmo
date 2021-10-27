@@ -89,3 +89,14 @@ Search word from word list.
 (example)
 !search bmo
 ```
+
+# How to develop
+
+Each commands was implemented as a module extends `Behavior` interface in `lambda/modules/behaviors/`.
+`Behavior` has following items.
+
+* `type`: unique key of the command
+* `triggerPattern`: regex as triggers the command when it matches a message in slack
+* `reaction`: function executed when the command triggered
+
+You can create new commands by adding modules to `lambda/modules/behaviors/` and importing them in `lambda/modules/behaviors/index.ts`
