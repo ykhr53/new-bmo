@@ -2,12 +2,13 @@
 import 'source-map-support/register';
 import * as cdk from '@aws-cdk/core';
 import { BMOPipelineStack } from '../lib/bmo-pipeline-stack';
+import { BMO_CONFIG } from '../lib/configuration';
 
 const app = new cdk.App();
 
-const prodAccount = process.env.CDK_DEFAULT_ACCOUNT;
-const prodRegion = process.env.CDK_DEFAULT_REGION;
+const pipeAccount = process.env.CDK_DEFAULT_ACCOUNT;
+const pipeRegion = BMO_CONFIG.Prod.REGION;
 
 new BMOPipelineStack(app, 'BMOPipelineStack', {
-    env: { account: prodAccount, region: prodRegion },
+    env: { account: pipeAccount, region: pipeRegion },
 });

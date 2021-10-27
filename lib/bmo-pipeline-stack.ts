@@ -1,6 +1,6 @@
 import {
     Arn,
-    ArnFormat,
+    Aws,
     ConcreteDependable,
     Construct,
     SecretValue,
@@ -16,15 +16,17 @@ import { Pipeline } from '@aws-cdk/aws-codepipeline';
 import { SlackChannelConfiguration } from '@aws-cdk/aws-chatbot';
 import { NotificationRule } from '@aws-cdk/aws-codestarnotifications';
 import { BMOPipelineStage } from './pipeline-stage';
+import { BMO_CONFIG } from './configuration';
 
 /**
  * The stack that defines the application pipeline
  */
 export class BMOPipelineStack extends Stack {
-    constructor(scope: Construct, id: string, props?: StackProps) {
+    constructor(scope: Construct, id: string, props: StackProps) {
         super(scope, id, props);
 
         const pipelineName = 'BMOPipeline';
+        const account = props.env?.account || Aws.ACCOUNT_ID;
 
         // Retrive values from Secrets Manager
         const githubToken = SecretValue.secretsManager('SlackTokenForBMO', {
@@ -52,14 +54,11 @@ export class BMOPipelineStack extends Stack {
             }),
         });
 
-        const account = props?.env?.account || process.env.CDK_DEFAULT_ACCOUNT;
-        const region = props?.env?.region || process.env.CDK_DEFAULT_REGION;
-
         // Deplpy Dev Stage
         const devBMO = new BMOPipelineStage(this, 'Dev', {
             env: {
                 account: account,
-                region: region,
+                region: BMO_CONFIG.Dev.REGION,
             },
         });
         pipeline.addStage(devBMO);
@@ -79,7 +78,7 @@ export class BMOPipelineStack extends Stack {
         const prodBMO = new BMOPipelineStage(this, 'Prod', {
             env: {
                 account: account,
-                region: region,
+                region: BMO_CONFIG.Prod.REGION,
             },
         });
         pipeline.addStage(prodBMO, {
