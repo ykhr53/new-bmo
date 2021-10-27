@@ -1,3 +1,5 @@
+import { WebClient } from '@slack/web-api';
+
 export interface LambdaRequest {
     resource: string;
     path: string;
@@ -37,10 +39,21 @@ export interface SlackMessage {
     user: string;
 }
 
-export interface RegexTable {
-    [key: string]: RegExp;
-}
-
 export interface VoteDict {
     [key: string]: number;
+}
+
+export interface ReactionContext {
+    slackClient?: WebClient;
+}
+
+export type Reaction = (
+    incomingMessage: SlackMessage,
+    context: ReactionContext
+) => Promise<void>;
+
+export interface Behavior {
+    type: string;
+    triggerPattern: RegExp;
+    reaction: Reaction;
 }

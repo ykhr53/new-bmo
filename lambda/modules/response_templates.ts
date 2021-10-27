@@ -1,4 +1,4 @@
-import { LambdaResponse } from './types';
+import { LambdaResponse } from '../types';
 
 export const HTTP_400: LambdaResponse = {
     statusCode: 400,
