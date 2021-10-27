@@ -99,4 +99,4 @@ Each commands was implemented as a module extends `Behavior` interface in `lambd
 * `triggerPattern`: regex as triggers the command when it matches a message in slack
 * `reaction`: function executed when the command triggered
 
-You can create new commands by adding modules to `lambda/modules/behaviors/` and exporting them from `lambda/modules/behaviors/index.ts`
+You can create new commands by adding modules to `lambda/modules/behaviors/` and exporting them from `lambda/modules/behaviors/index.ts`.
