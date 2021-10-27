@@ -101,7 +101,7 @@ Search word from word list.
 
 # How to develop
 
-Each commands was implemented as a module extends `Behavior` interface in `lambda/modules/behaviors/`.
+Each commands were implemented as a module extends `Behavior` interface in `lambda/modules/behaviors/`.
 `Behavior` has following items.
 
 * `type`: unique key of the command
