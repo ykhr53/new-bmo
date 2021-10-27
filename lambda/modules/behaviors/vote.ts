@@ -26,12 +26,12 @@ export function parseVote(text: string): VoteDict {
 
 // Export for test
 export const generateVoteReply = (
-    beforeVote: VoteDict,
+    diffVote: VoteDict,
     afterVote: VoteDict
 ): string => {
     let reply = '';
     for (let name in afterVote) {
-        const diff = afterVote[name] - beforeVote[name];
+        const diff = diffVote[name];
         let diffMessage = '';
         if (diff > 1 || diff < -1) diffMessage = `(got ${diff} votes)`;
         reply += `${name}: ${afterVote[name]} voted! ${diffMessage}\n`;
