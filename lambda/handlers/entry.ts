@@ -69,12 +69,12 @@ async function behaveReactions(
     incomingMessage: SlackMessage,
     reactionContext: ReactionContext
 ) {
-    behaviors.forEach((behavior) => {
+    for (const behavior of behaviors) {
         if (incomingMessage.text.match(behavior.triggerPattern) != null) {
             console.log(`triggered reaction "${behavior.type}"`);
-            behavior.reaction(incomingMessage, reactionContext);
+            await behavior.reaction(incomingMessage, reactionContext);
         }
-    });
+    }
 }
 
 function getMessage(lambdaEvent: { [key: string]: any }): SlackMessage {
