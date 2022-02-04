@@ -5,6 +5,7 @@ import {
     wordsBehavior,
     addBehavior,
     searchBehavior,
+    hrBehavior,
 } from './word';
 
 export const behaviors: Behavior[] = [
@@ -13,4 +14,5 @@ export const behaviors: Behavior[] = [
     wordsBehavior,
     addBehavior,
     searchBehavior,
+    hrBehavior,
 ];

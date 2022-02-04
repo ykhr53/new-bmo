@@ -223,3 +223,25 @@ export const searchBehavior: Behavior = {
     triggerPattern: /^\!search\s\S+/,
     reaction: searchReaction,
 };
+
+/*
+ * HR command
+ */
+
+const hrReaction: Reaction = async (incomingMessage, context) => {
+    // Return immediately if slack client was not passed
+    if (!context.slackClient) return;
+
+    // Post a warning message
+    await context.slackClient.chat.postMessage({
+        channel: incomingMessage.channel,
+        text: '人事について呟くときは必ず情報を添えて下さい！',
+    });
+    return;
+};
+
+export const hrBehavior: Behavior = {
+    type: 'hr',
+    triggerPattern: /^人事$/,
+    reaction: hrReaction,
+};
