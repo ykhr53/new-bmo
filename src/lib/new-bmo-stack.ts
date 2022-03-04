@@ -40,7 +40,7 @@ export class NewBmoStack extends cdk.Stack {
             `BMO-Lambda-${stage}`,
             {
                 functionName: `BMO-Lambda-${stage}`,
-                entry: 'lambda/handlers/entry.ts',
+                entry: 'src/lambda/handlers/entry.ts',
                 memorySize: 128,
                 timeout: cdk.Duration.seconds(10),
                 runtime: lambda.Runtime.NODEJS_14_X,

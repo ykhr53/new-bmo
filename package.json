@@ -2,12 +2,13 @@
     "name": "new-bmo",
     "version": "0.1.0",
     "bin": {
-        "new-bmo": "bin/new-bmo.js"
+        "new-bmo": "src/bin/app.js"
     },
     "scripts": {
         "build": "tsc",
         "watch": "tsc -w",
         "test": "jest",
+        "typecheck": "tsc --noEmit",
         "cdk": "cdk"
     },
     "devDependencies": {

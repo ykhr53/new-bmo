@@ -27,7 +27,7 @@ SLACK_CHANNEL_ID: <Slack Channel ID for notification>
 
 ## Deploy target region (Optional)
 
-Please specify deploy target regions in `lib/configuration.ts`.
+Please specify deploy target regions in `src/lib/configuration.ts`.
 By default, BMO deploys a pipeline to Prod stage's region.
 
 # Features
@@ -106,11 +106,11 @@ Search word from word list.
 
 # How to develop
 
-Each command was implemented as a module extends `Behavior` interface in `lambda/modules/behaviors/`.
+Each command was implemented as a module extends `Behavior` interface in `src/lambda/modules/behaviors/`.
 `Behavior` has following items.
 
 * `type`: unique key of the command
 * `triggerPattern`: regex as triggers the command when it matches a message in slack
 * `reaction`: function executed when the command triggered
 
-You can create new commands by adding modules to `lambda/modules/behaviors/` and exporting them from `lambda/modules/behaviors/index.ts`.
+You can create new commands by adding modules to `src/lambda/modules/behaviors/` and exporting them from `src/lambda/modules/behaviors/index.ts`.
