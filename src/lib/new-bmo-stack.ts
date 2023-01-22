@@ -1,10 +1,11 @@
-import * as cdk from '@aws-cdk/core';
-import * as nodejs from '@aws-cdk/aws-lambda-nodejs';
-import * as lambda from '@aws-cdk/aws-lambda';
-import * as apigateway from '@aws-cdk/aws-apigateway';
-import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
-import * as ddb from '@aws-cdk/aws-dynamodb';
-import * as iam from '@aws-cdk/aws-iam';
+import * as cdk from 'aws-cdk-lib';
+import { Construct } from 'constructs';
+import * as nodejs from 'aws-cdk-lib/aws-lambda-nodejs';
+import * as lambda from 'aws-cdk-lib/aws-lambda';
+import * as apigateway from 'aws-cdk-lib/aws-apigateway';
+import * as secretsmanager from 'aws-cdk-lib/aws-secretsmanager';
+import * as ddb from 'aws-cdk-lib/aws-dynamodb';
+import * as iam from 'aws-cdk-lib/aws-iam';
 
 export interface BMOStackProps extends cdk.StackProps {
     readonly stage: string;
@@ -14,7 +15,7 @@ export class NewBmoStack extends cdk.Stack {
     // The URL of the API Gateway endpoint, for use in the integ tests
     public readonly urlOutput: cdk.CfnOutput;
 
-    constructor(scope: cdk.Construct, id: string, props?: BMOStackProps) {
+    constructor(scope: Construct, id: string, props?: BMOStackProps) {
         super(scope, id, props);
         const stage = props?.stage || 'default';
 

@@ -1,6 +1,7 @@
 {
     "name": "new-bmo",
     "version": "0.1.0",
+    "license": "UNLICENSED",
     "bin": {
         "new-bmo": "src/bin/app.js"
     },
@@ -12,20 +13,8 @@
         "cdk": "cdk"
     },
     "devDependencies": {
-        "aws-cdk": "1.123.0",
-        "@aws-cdk/core": "1.123.0",
-        "@aws-cdk/pipelines": "1.123.0",
-        "@aws-cdk/assert": "1.123.0",
-        "@aws-cdk/aws-apigateway": "1.123.0",
-        "@aws-cdk/aws-lambda": "1.123.0",
-        "@aws-cdk/aws-lambda-nodejs": "1.123.0",
-        "@aws-cdk/aws-dynamodb": "1.123.0",
-        "@aws-cdk/aws-iam": "1.123.0",
-        "@aws-cdk/aws-secretsmanager": "1.123.0",
-        "@aws-cdk/aws-codepipeline": "1.123.0",
-        "@aws-cdk/aws-codepipeline-actions": "1.123.0",
-        "@aws-cdk/aws-chatbot": "1.123.0",
-        "@aws-cdk/aws-codestarnotifications": "1.123.0",
+        "aws-cdk-lib": "2.61.1",
+        "constructs": "^10.0.0",
         "@types/jest": "^26.0.10",
         "@types/node": "10.17.27",
         "esbuild": "0",

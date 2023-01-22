@@ -1,20 +1,13 @@
-import {
-    Arn,
-    Aws,
-    ConcreteDependable,
-    Construct,
-    SecretValue,
-    Stack,
-    StackProps,
-} from '@aws-cdk/core';
+import { Arn, Aws, SecretValue, Stack, StackProps } from 'aws-cdk-lib';
+import { Construct, DependencyGroup } from 'constructs';
 import {
     CodePipeline,
     ShellStep,
     CodePipelineSource,
-} from '@aws-cdk/pipelines';
-import { Pipeline } from '@aws-cdk/aws-codepipeline';
-import { SlackChannelConfiguration } from '@aws-cdk/aws-chatbot';
-import { NotificationRule } from '@aws-cdk/aws-codestarnotifications';
+} from 'aws-cdk-lib/pipelines';
+import { Pipeline } from 'aws-cdk-lib/aws-codepipeline';
+import { SlackChannelConfiguration } from 'aws-cdk-lib/aws-chatbot';
+import { NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
 import { BMOPipelineStage } from './pipeline-stage';
 import { BMO_CONFIG } from './configuration';
 
@@ -119,7 +112,7 @@ export class BMOPipelineStack extends Stack {
         });
 
         // Configure resource creation order
-        const ruleDependencies = new ConcreteDependable();
+        const ruleDependencies = new DependencyGroup();
         ruleDependencies.add(pipeline);
         ruleDependencies.add(slackChannel);
         rule.node.addDependency(ruleDependencies);
