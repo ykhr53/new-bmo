@@ -100,7 +100,6 @@ export class BMOPipelineStack extends Stack {
         const rule = new NotificationRule(this, 'NotificationRule', {
             notificationRuleName: 'BMONotifRule',
             events: [
-                'codepipeline-pipeline-stage-execution-started',
                 'codepipeline-pipeline-stage-execution-failed',
                 'codepipeline-pipeline-pipeline-execution-succeeded',
             ],
