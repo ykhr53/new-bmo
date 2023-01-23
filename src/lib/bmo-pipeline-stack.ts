@@ -8,6 +8,7 @@ import {
 import { Pipeline } from 'aws-cdk-lib/aws-codepipeline';
 import { SlackChannelConfiguration } from 'aws-cdk-lib/aws-chatbot';
 import { NotificationRule } from 'aws-cdk-lib/aws-codestarnotifications';
+import { StringParameter } from 'aws-cdk-lib/aws-ssm';
 import { BMOPipelineStage } from './pipeline-stage';
 import { BMO_CONFIG } from './configuration';
 
@@ -21,10 +22,12 @@ export class BMOPipelineStack extends Stack {
         const pipelineName = 'BMOPipeline';
         const account = props.env?.account || Aws.ACCOUNT_ID;
 
+        // Get GitHub connection arn from Parameter Store
+        const connectionArn = StringParameter.valueForStringParameter(
+            this,
+            'bmo_connection_arn'
+        );
         // Retrive values from Secrets Manager
-        const githubToken = SecretValue.secretsManager('SlackTokenForBMO', {
-            jsonField: 'GITHUB_TOKEN',
-        });
         const workspaceId = SecretValue.secretsManager('SlackTokenForBMO', {
             jsonField: 'SLACK_WS_ID',
         }).toString();
@@ -36,9 +39,13 @@ export class BMOPipelineStack extends Stack {
         const pipeline = new CodePipeline(this, 'BMOPipeline', {
             pipelineName: pipelineName,
             synth: new ShellStep('Synth', {
-                input: CodePipelineSource.gitHub('ykhr53/new-bmo', 'mainline', {
-                    authentication: githubToken,
-                }),
+                input: CodePipelineSource.connection(
+                    'ykhr53/new-bmo',
+                    'mainline',
+                    {
+                        connectionArn: connectionArn,
+                    }
+                ),
                 commands: [
                     'yarn install --frozen-lockfile',
                     'yarn build',
