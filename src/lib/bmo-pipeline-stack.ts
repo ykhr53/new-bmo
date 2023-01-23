@@ -54,26 +54,6 @@ export class BMOPipelineStack extends Stack {
             }),
         });
 
-        // Deplpy Dev Stage
-        const devBMO = new BMOPipelineStage(this, 'Dev', {
-            env: {
-                account: account,
-                region: BMO_CONFIG.Dev.REGION,
-            },
-        });
-        pipeline.addStage(devBMO);
-
-        // Test ShellStep
-        // ToDo: Add some "real" test
-        const curlTest = new ShellStep('curlTest', {
-            envFromCfnOutputs: {
-                ENDPOINT: devBMO.urlOutput,
-            },
-            commands: [
-                'curl -sS -X POST -H "Content-Type: application/json" -d \'{"challenge":"somechallengemessage"}\' $ENDPOINT',
-            ],
-        });
-
         // Deplpy Prod Stage
         const prodBMO = new BMOPipelineStage(this, 'Prod', {
             env: {
@@ -81,9 +61,7 @@ export class BMOPipelineStack extends Stack {
                 region: BMO_CONFIG.Prod.REGION,
             },
         });
-        pipeline.addStage(prodBMO, {
-            pre: [curlTest],
-        });
+        pipeline.addStage(prodBMO);
 
         // Chatbot for Slack notification
         const slackChannel = new SlackChannelConfiguration(
